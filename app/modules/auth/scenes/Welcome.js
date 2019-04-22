@@ -6,7 +6,7 @@ import {Actions} from 'react-native-router-flux'
 
 import { padding, color, fontSize } from "../../../styles/Theme"
 import LottieView from "lottie-react-native";
-const ball = require('./simple_ball_bounce.json');
+const movie = require('./cinema.json');
 
 export default class Welcome extends React.Component {
     render() {
@@ -24,11 +24,11 @@ export default class Welcome extends React.Component {
             >
                 <View style={styles.container}>
                     <View style={styles.wrapper}>
-                        <Text h1 style={{ color: '#fff' }}>Goru</Text>
+                        <Text h1 style={{ color: '#fff' }}>Little Monster</Text>
                         <View>
                             <LottieView
-                                source={ball}
-                                style={styles.ball}
+                                source={movie}
+                                style={styles.movie}
                                 loop
                                 autoPlay
                             />
@@ -68,7 +68,7 @@ const styles = StyleSheet.create({
     wrapper:{
         flex:1, justifyContent:"center", alignItems:"center"
     },
-    ball: {
+    movie: {
         width: 400,
         height: 180,
     },
