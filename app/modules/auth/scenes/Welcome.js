@@ -20,11 +20,11 @@ export default class Welcome extends React.Component {
                     height: '100%',
                     justifyContent: 'center',
                 }}
-                source={require('./cancha.jpg')}
+                source={require('./popcorn.jpg')}
             >
                 <View style={styles.container}>
                     <View style={styles.wrapper}>
-                        <Text h1 style={{ color: '#fff' }}>Little Monster</Text>
+                        <Text h1 style={styles.shadow}>Little Monster</Text>
                         <View>
                             <LottieView
                                 source={movie}
@@ -69,8 +69,8 @@ const styles = StyleSheet.create({
         flex:1, justifyContent:"center", alignItems:"center"
     },
     movie: {
-        width: 400,
-        height: 180,
+        width: 500,
+        height: 280,
     },
 
     bottomContainer:{
@@ -83,5 +83,11 @@ const styles = StyleSheet.create({
 
     buttonText:{
         fontWeight:"500"
+    },
+    shadow: {
+        color: '#fff',
+        textShadowOffset: { width: 2, height: 2 },
+        textShadowRadius: 1,
+        textShadowColor: '#000',
     }
 });

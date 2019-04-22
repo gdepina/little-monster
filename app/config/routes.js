@@ -59,7 +59,7 @@ class Routes extends React.Component {
 
                     <Stack key="Main" initial={this.state.isLoggedIn}>
                         <Scene key="Home" component={Home} title="Little Monster" initial={true} type={ActionConst.REPLACE} hideNavBar/>
-                        <Scene key="MatchCreator" component={MatchCreator} title="Crea tu partido" user={this.state.user} />
+                        {/*<Scene key="MatchCreator" component={MatchCreator} title="Crea tu partido" user={this.state.user} />*/}
                         <Scene key="MatchList" component={MatchList} title="Busca tu peli" user={this.state.user} />
                         <Scene key="Match" component={Match} title="Partido"  user={this.state.user} />
                     </Stack>
