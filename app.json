@@ -1,0 +1,21 @@
+{
+  "expo": {
+    "sdkVersion": "30.0.0",
+    "name": "little-monster",
+    "slug": "little-monster",
+    "version": "0.1.0",
+    "description": "little-monster project",
+    "githubUrl": "https://github.com/gdepina/little-monster",
+    "platforms": [
+      "android",
+      "ios"
+    ]
+  },
+  "android": {
+    "config": {
+      "googleMaps": {
+        "apiKey": "AIzaSyDj9i_GKdG2tV2mL-Nd78ZWg8_yp2abGYo"
+      }
+    }
+  }
+}
