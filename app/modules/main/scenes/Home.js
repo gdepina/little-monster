@@ -1,14 +1,17 @@
 import React from 'react';
-const { View, StyleSheet, Alert, ImageBackground } = require('react-native');
-
-import {Button} from 'react-native-elements'
+const { View, StyleSheet, Text, Alert, ImageBackground } = require('react-native');
 import {Actions} from 'react-native-router-flux';
 import {connect} from 'react-redux';
 
-import { color } from "../../../styles/Theme"
+import { actions as auth } from "../../auth";
 
-import { actions as auth } from "../../auth"
+import OptionsMenu from 'react-native-options-menu';
+import Colors from '../../../config/Colors';
+
 var { signOut } = auth;
+
+const MoreIcon = require('./more.png');
+const bkgColor = Colors.tintColor;
 
 class Home extends React.Component {
     constructor(){
@@ -37,11 +40,11 @@ class Home extends React.Component {
                     position: 'absolute',
                     width: '100%',
                     height: '100%',
-                    justifyContent: 'center',
+               //     justifyContent: 'center',
                 }}
                 source={require('./movie-flag.jpg')}
             >
-                <View style={styles.container}>
+                <View style={styles.topBar}>
                     {/*<Button*/}
                         {/*large*/}
                         {/*raised*/}
@@ -64,7 +67,7 @@ class Home extends React.Component {
                         {/*textStyle={styles.buttonText}*/}
                         {/*onPress={Actions.MatchCreator}*/}
                         {/*/>*/}
-                    <Button
+                    {/* <Button
                         large
                         raised
                         title={'Ver peliculas'}
@@ -84,7 +87,14 @@ class Home extends React.Component {
                         containerViewStyle={[styles.buttonContainer, {marginVertical:4}]}
                         buttonStyle={{}} //optional
                         textStyle={styles.buttonText}
-                        onPress={this.onSignOut.bind(this)}/>
+                        onPress={this.onSignOut.bind(this)}/> */}
+                        <Text style={styles.title}>Mis Reseñas</Text>
+                        <OptionsMenu
+                            button={MoreIcon}
+                            buttonStyle={{ width: 40, height: 20, margin: 7.5, resizeMode: "contain" }}
+                            destructiveIndex={1}
+                            options={["BuscarPeliculas", "Cerrar Sesión"]}
+                            actions={[Actions.MatchList, this.onSignOut.bind(this)]}/>
                 </View>
             </ImageBackground>
         );
@@ -113,6 +123,17 @@ const styles = StyleSheet.create({
 
     buttonText:{
         fontWeight:"500"
+    },
+    topBar:{
+        backgroundColor:bkgColor,
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems:"flex-end"
+      },
+    title:{
+        fontSize:20,
+        fontWeight: 'bold',
+        color: '#ffffff'
     }
 });
 

@@ -16,7 +16,7 @@ import {Actions} from "react-native-router-flux";
 
 
 const device_width = Dimensions.get('window').width;
-º
+
 const { loadMatchs, loadMatch } = actions;
 
 class MovieList extends React.Component {
