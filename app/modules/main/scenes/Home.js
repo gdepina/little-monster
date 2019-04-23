@@ -42,28 +42,6 @@ class Home extends React.Component {
                 source={require('./movie-flag.jpg')}
             >
                 <View style={styles.container}>
-                    {/*<Button*/}
-                        {/*large*/}
-                        {/*raised*/}
-                        {/*title={'Mis partidos'}*/}
-                        {/*borderRadius={4}*/}
-                        {/*backgroundColor={color.main}*/}
-                        {/*containerViewStyle={[styles.buttonContainer, {marginVertical:4}]}*/}
-                        {/*buttonStyle={{}} //optional*/}
-                        {/*textStyle={styles.buttonText}*/}
-                        {/*onPress={() => Actions.MatchList({ myMatchs: true })}*/}
-                    {/*/>*/}
-                    {/*<Button*/}
-                        {/*large*/}
-                        {/*raised*/}
-                        {/*title={'Ingresar nueva pelicula'}*/}
-                        {/*borderRadius={4}*/}
-                        {/*backgroundColor={color.main}*/}
-                        {/*containerViewStyle={[styles.buttonContainer, {marginVertical:4}]}*/}
-                        {/*buttonStyle={{}} //optional*/}
-                        {/*textStyle={styles.buttonText}*/}
-                        {/*onPress={Actions.MatchCreator}*/}
-                        {/*/>*/}
                     <Button
                         large
                         raised
