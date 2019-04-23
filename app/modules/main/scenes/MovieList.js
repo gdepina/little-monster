@@ -16,7 +16,10 @@ import {Actions} from "react-native-router-flux";
 
 
 const device_width = Dimensions.get('window').width;
+<<<<<<< HEAD
 
+=======
+>>>>>>> master
 const { loadMatchs, loadMatch } = actions;
 
 class MovieList extends React.Component {
@@ -101,7 +104,7 @@ class MovieList extends React.Component {
 
     onPressRow(id) {
         // this.props.loadMatch(id)
-        return Actions.Match({id});
+        return Actions.Detail({id});
     }
 
 

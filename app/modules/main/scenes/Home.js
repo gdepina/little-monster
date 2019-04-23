@@ -44,6 +44,7 @@ class Home extends React.Component {
                 }}
                 source={require('./movie-flag.jpg')}
             >
+<<<<<<< HEAD
                 <View style={styles.topBar}>
                     {/*<Button*/}
                         {/*large*/}
@@ -68,6 +69,10 @@ class Home extends React.Component {
                         {/*onPress={Actions.MatchCreator}*/}
                         {/*/>*/}
                     {/* <Button
+=======
+                <View style={styles.container}>
+                    <Button
+>>>>>>> master
                         large
                         raised
                         title={'Ver peliculas'}
