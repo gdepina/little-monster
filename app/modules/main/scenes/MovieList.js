@@ -16,8 +16,12 @@ import {Actions} from "react-native-router-flux";
 
 
 const device_width = Dimensions.get('window').width;
+<<<<<<< HEAD
 
 const { loadMatchs, loadMatch } = actions;
+=======
+const { loadMovies } = actions;
+>>>>>>> 5a0ffffdf05494b0d901d792b11a9688f3fff1f7
 
 class MovieList extends React.Component {
     constructor() {
@@ -34,7 +38,7 @@ class MovieList extends React.Component {
     }
 
     componentDidMount() {
-        this.props.loadMatchs();
+        //this.props.loadMatchs();
     }
 
     componentWillReceiveProps(nextProps) {
@@ -144,7 +148,7 @@ function mapStateToProps(state, props) {
     }
 }
 
-export default connect(mapStateToProps, { loadMatchs, loadMatch })(MovieList);
+export default connect(mapStateToProps,null)(MovieList);
 
 
 const styles = StyleSheet.create({

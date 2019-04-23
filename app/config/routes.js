@@ -1,12 +1,13 @@
 import React from 'react';
 import {Scene, Router, ActionConst, Stack} from 'react-native-router-flux';
-const { StyleSheet } = require('react-native');
+const { StyleSheet, Platform } = require('react-native');
 
 import Splash from '../modules/splash/Splash';
 import Home from '../modules/main/scenes/Home';
 //import MatchCreator from '../modules/main/scenes/MatchCreator';
 import Detail from '../modules/main/scenes/Detail';
 import MatchList from '../modules/main/scenes/MovieList';
+import TabBarIcon from './TabBarIcon'
 
 import Welcome from '../modules/auth/scenes/Welcome';
 import Register from '../modules/auth/scenes/Register';
@@ -45,6 +46,17 @@ class Routes extends React.Component {
         if (!this.state.isReady)
             return <Splash/>
 
+
+        const icon =  ({ focused, type }) => (
+            <TabBarIcon
+              focused={focused}
+              name={
+                Platform.OS === 'ios'
+                  ? `ios-${type}${focused ? '' : '-outline'}`
+                  : `md-${type}`
+              }
+            />
+          )
         return (
             <Router navigationBarStyle={styles.navBar} titleStyle={styles.navBarTitle} tintColor='white'
                     barButtonTextStyle={styles.barButtonTextStyle} barButtonIconStyle={styles.barButtonIconStyle}
@@ -58,10 +70,12 @@ class Routes extends React.Component {
 
 
                     <Stack key="Main" initial={this.state.isLoggedIn}>
-                        <Scene key="Home" component={Home} title="Little Monster" initial={true} type={ActionConst.REPLACE} hideNavBar/>
-                        {/*<Scene key="MatchCreator" component={MatchCreator} title="Crea tu partido" user={this.state.user} />*/}
-                        <Scene key="MatchList" component={MatchList} title="Busca tu peli" user={this.state.user} />
-                        <Scene key="Detail" component={Detail} title="Detalle"  user={this.state.user} />
+                        <Scene key='root' tabs={true} hideNavBar>
+                            {/*<Scene key="MatchCreator" component={MatchCreator} title="Crea tu partido" user={this.state.user} />*/}
+                            <Scene key="Home" component={Home} title="Perfil" type={ActionConst.REPLACE} initial={true}  hideNavBar icon={(focused) => icon({focused, type: 'contact'})}/>
+                            <Scene key="MatchList" component={MatchList} title="Buscar" user={this.state.user} icon={(focused) => icon({focused, type: 'search'})}/>
+                        </Scene>
+                        <Scene key="Detail" component={Detail} title="Partido"  user={this.state.user} />
                     </Stack>
                 </Scene>
             </Router>

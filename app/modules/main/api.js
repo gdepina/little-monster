@@ -1,13 +1,16 @@
 import axios from 'axios';
 
 import firebase from "../../config/firebase";
+import { API_URL } from "../../config/constants";
 
 const database = firebase.database();
 import matchModel from '../../models/match'
 import playerModel from '../../models/player'
 
-export function getMatchsDB() {
-    return database.ref('/match').once('value')
+export async function getMovies() {
+    let url = `${API_URL}/movies`;
+    let response = await axios.get(url);
+    return response.data;
 }
 // get specified section
 export function getMatchDB(matchId) {

@@ -1,17 +1,17 @@
 import actionType from './actionTypes';
 import * as api from './api';
 
-export function loadMatchs(key) {
+export function loadMovies(key) {
     return dispatch => {
         dispatch({
             type: actionType.LOAD_MATCHES_REQUEST
         })
-        api.getMatchsDB()
-            .then(match => {
+        api.getMovies()
+            .then(res => {
                 dispatch({
                     type: actionType.LOAD_MATCHES_SUCCESS,
-                    payload: match.val()
-                })
+                    payload: res,
+                }),
                 key && dispatch({
                     type: actionType.ADD_MATCH_SUCCESS,
                     payload: key,
@@ -53,7 +53,7 @@ export function createMatch(name, orgId, matchSize, courtType, location, datetim
         dispatch({
             type: actionType.ADD_MATCH_REQUEST
         })
-       const result = api.addMatch(name, orgId, matchSize, courtType, location, datetime, locationName, players, phoneNumber)
+        const result = api.addMatch(name, orgId, matchSize, courtType, location, datetime, locationName, players, phoneNumber)
         result.prom
             .then(() => {
                 loadMatchs(result.key)(dispatch) //refresh the data to keep up-to-date
@@ -71,10 +71,10 @@ export function createMatch(name, orgId, matchSize, courtType, location, datetim
 export function addPlayerToMatch(matchId, playerId, email, displayName) {
     return dispatch => {
         api.addPlayerItem(matchId, playerId, email, displayName)
-            .then( () => {
+            .then(() => {
                 loadMatchs(matchId)(dispatch);
             })
-            .catch( error => {
+            .catch(error => {
                 dispatch({
                     type: actionType.ADD_MATCH_FAILED,
                     payload: error
@@ -86,10 +86,10 @@ export function addPlayerToMatch(matchId, playerId, email, displayName) {
 export function removePlayerFromMatch(matchId, playerId) {
     return dispatch => {
         api.removePlayerItem(matchId, playerId)
-            .then( () => {
+            .then(() => {
                 loadMatchs(matchId)(dispatch);
             })
-            .catch( error => {
+            .catch(error => {
                 dispatch({
                     type: actionType.ADD_MATCH_FAILED,
                     payload: error
@@ -101,10 +101,10 @@ export function removePlayerFromMatch(matchId, playerId) {
 export function destroyMatch(matchId) {
     return dispatch => {
         api.destroyMatch(matchId)
-            .then( () => {
+            .then(() => {
                 loadMatchs()(dispatch);
             })
-            .catch( error => {
+            .catch(error => {
                 dispatch({
                     type: actionType.ADD_MATCH_FAILED,
                     payload: error
