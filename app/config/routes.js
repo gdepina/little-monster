@@ -4,8 +4,8 @@ const { StyleSheet } = require('react-native');
 
 import Splash from '../modules/splash/Splash';
 import Home from '../modules/main/scenes/Home';
-import MatchCreator from '../modules/main/scenes/MatchCreator';
-import Match from '../modules/main/scenes/Match';
+//import MatchCreator from '../modules/main/scenes/MatchCreator';
+import Detail from '../modules/main/scenes/Detail';
 import MatchList from '../modules/main/scenes/MovieList';
 
 import Welcome from '../modules/auth/scenes/Welcome';
@@ -61,7 +61,7 @@ class Routes extends React.Component {
                         <Scene key="Home" component={Home} title="Little Monster" initial={true} type={ActionConst.REPLACE} hideNavBar/>
                         {/*<Scene key="MatchCreator" component={MatchCreator} title="Crea tu partido" user={this.state.user} />*/}
                         <Scene key="MatchList" component={MatchList} title="Busca tu peli" user={this.state.user} />
-                        <Scene key="Match" component={Match} title="Partido"  user={this.state.user} />
+                        <Scene key="Detail" component={Detail} title="Detalle"  user={this.state.user} />
                     </Stack>
                 </Scene>
             </Router>
