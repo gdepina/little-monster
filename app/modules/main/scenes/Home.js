@@ -1,14 +1,22 @@
 import React from 'react';
-const { View, StyleSheet, Text, Alert, ImageBackground } = require('react-native');
+const { View, StyleSheet, Alert, ImageBackground, Text, Dimensions, Image } = require('react-native');
+
 import {Actions} from 'react-native-router-flux';
 import {connect} from 'react-redux';
 
-import { actions as auth } from "../../auth";
+import Carousel from 'react-native-banner-carousel';
+import Mock from './mock.json'
+
 
 import OptionsMenu from 'react-native-options-menu';
 import Colors from '../../../config/Colors';
 
+import { actions as auth } from "../../auth"
 var { signOut } = auth;
+import {actions, reducer as mainReducer} from "../"
+const { loadMovies } = actions;
+
+const {width, height} = Dimensions.get('window');
 
 const MoreIcon = require('./more.png');
 const bkgColor = Colors.tintColor;
@@ -17,6 +25,10 @@ class Home extends React.Component {
     constructor(){
         super();
         this.state = { }
+    }
+
+    componentDidMount() {
+        this.props.loadMovies();
     }
 
     onSignOut() {
@@ -31,6 +43,12 @@ class Home extends React.Component {
         Alert.alert('Oops!', error.message);
     }
 
+    renderItem(img, index) {
+        return (<View key={index}>
+            <Image style={{ width: width, height: height*0.3 }} source={{ uri: img }} />
+        </View>)
+    }
+
     render() {
         return (
             <ImageBackground
@@ -40,10 +58,11 @@ class Home extends React.Component {
                     position: 'absolute',
                     width: '100%',
                     height: '100%',
-               //     justifyContent: 'center',
+                    justifyContent: 'center',
                 }}
                 source={require('./movie-flag.jpg')}
             >
+                <View style={styles.container}>
                 <View style={styles.topBar}>
                         <Text style={styles.title}>Mis Reseñas</Text>
                         <OptionsMenu
@@ -53,6 +72,16 @@ class Home extends React.Component {
                             options={["BuscarPeliculas", "Cerrar Sesión"]}
                             actions={[Actions.MatchList, this.onSignOut.bind(this)]}/>
                 </View>
+                    <Carousel
+                        autoplay
+                        autoplayTimeout={5000}
+                        loop
+                        index={0}
+                        pageSize={width}
+                    >
+                        {this.props.movies.map((item, index) => this.renderItem(item.Poster, index))}
+                    </Carousel>
+                </View>
             </ImageBackground>
         );
     }
@@ -60,18 +89,17 @@ class Home extends React.Component {
 
 function mapStateToProps(state, props) {
     return {
-        user:  state.authReducer.user
+        user:  state.authReducer.user,
+        movies:  state.mainReducer.movies
     }
 }
 
-export default connect(mapStateToProps, { signOut })(Home);
+export default connect(mapStateToProps, { signOut, loadMovies })(Home);
 
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
-        justifyContent: "center",
-        alignItems: "center"
+        flex:1
     },
 
     buttonContainer:{

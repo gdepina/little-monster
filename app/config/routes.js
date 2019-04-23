@@ -45,8 +45,8 @@ class Routes extends React.Component {
     render() {
         if (!this.state.isReady)
             return <Splash/>
-        
-            
+
+
         const icon =  ({ focused, type }) => (
             <TabBarIcon
               focused={focused}
@@ -70,12 +70,12 @@ class Routes extends React.Component {
 
 
                     <Stack key="Main" initial={this.state.isLoggedIn}>
-                        <Scene key='root' tabs={true}>
+                        <Scene key='root' tabs={true} hideNavBar>
                             {/*<Scene key="MatchCreator" component={MatchCreator} title="Crea tu partido" user={this.state.user} />*/}
-                            <Scene key="MatchList" component={MatchList} title="Buscar" initial={true} user={this.state.user} hideNavBar icon={(focused) => icon({focused, type: 'search'})}/>
-                            <Scene key="Home" component={Home} title="Perfil" type={ActionConst.REPLACE} hideNavBar icon={(focused) => icon({focused, type: 'contact'})}/>
+                            <Scene key="Home" component={Home} title="Perfil" type={ActionConst.REPLACE} initial={true}  hideNavBar icon={(focused) => icon({focused, type: 'contact'})}/>
+                            <Scene key="MatchList" component={MatchList} title="Buscar" user={this.state.user} icon={(focused) => icon({focused, type: 'search'})}/>
                         </Scene>
-                        <Scene key="Match" component={Match} title="Partido"  user={this.state.user} />
+                        <Scene key="Detail" component={Detail} title="Partido"  user={this.state.user} />
                     </Stack>
                 </Scene>
             </Router>
