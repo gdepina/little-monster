@@ -70,19 +70,12 @@ class Routes extends React.Component {
 
 
                     <Stack key="Main" initial={this.state.isLoggedIn}>
-<<<<<<< HEAD
                         <Scene key='root' tabs={true}>
                             {/*<Scene key="MatchCreator" component={MatchCreator} title="Crea tu partido" user={this.state.user} />*/}
                             <Scene key="MatchList" component={MatchList} title="Buscar" initial={true} user={this.state.user} hideNavBar icon={(focused) => icon({focused, type: 'search'})}/>
                             <Scene key="Home" component={Home} title="Perfil" type={ActionConst.REPLACE} hideNavBar icon={(focused) => icon({focused, type: 'contact'})}/>
                         </Scene>
                         <Scene key="Match" component={Match} title="Partido"  user={this.state.user} />
-=======
-                        <Scene key="Home" component={Home} title="Little Monster" initial={true} type={ActionConst.REPLACE} hideNavBar/>
-                        {/*<Scene key="MatchCreator" component={MatchCreator} title="Crea tu partido" user={this.state.user} />*/}
-                        <Scene key="MatchList" component={MatchList} title="Busca tu peli" user={this.state.user} />
-                        <Scene key="Detail" component={Detail} title="Detalle"  user={this.state.user} />
->>>>>>> master
                     </Stack>
                 </Scene>
             </Router>

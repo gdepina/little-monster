@@ -44,55 +44,7 @@ class Home extends React.Component {
                 }}
                 source={require('./movie-flag.jpg')}
             >
-<<<<<<< HEAD
                 <View style={styles.topBar}>
-                    {/*<Button*/}
-                        {/*large*/}
-                        {/*raised*/}
-                        {/*title={'Mis partidos'}*/}
-                        {/*borderRadius={4}*/}
-                        {/*backgroundColor={color.main}*/}
-                        {/*containerViewStyle={[styles.buttonContainer, {marginVertical:4}]}*/}
-                        {/*buttonStyle={{}} //optional*/}
-                        {/*textStyle={styles.buttonText}*/}
-                        {/*onPress={() => Actions.MatchList({ myMatchs: true })}*/}
-                    {/*/>*/}
-                    {/*<Button*/}
-                        {/*large*/}
-                        {/*raised*/}
-                        {/*title={'Ingresar nueva pelicula'}*/}
-                        {/*borderRadius={4}*/}
-                        {/*backgroundColor={color.main}*/}
-                        {/*containerViewStyle={[styles.buttonContainer, {marginVertical:4}]}*/}
-                        {/*buttonStyle={{}} //optional*/}
-                        {/*textStyle={styles.buttonText}*/}
-                        {/*onPress={Actions.MatchCreator}*/}
-                        {/*/>*/}
-                    {/* <Button
-=======
-                <View style={styles.container}>
-                    <Button
->>>>>>> master
-                        large
-                        raised
-                        title={'Ver peliculas'}
-                        borderRadius={4}
-                        backgroundColor={color.main}
-                        containerViewStyle={[styles.buttonContainer, {marginVertical:4}]}
-                        buttonStyle={{}} //optional
-                        textStyle={styles.buttonText}
-                        onPress={Actions.MatchList}
-                        />
-                    <Button
-                        large
-                        raised
-                        title={'Cerrar sesion'}
-                        borderRadius={4}
-                        backgroundColor={color.main}
-                        containerViewStyle={[styles.buttonContainer, {marginVertical:4}]}
-                        buttonStyle={{}} //optional
-                        textStyle={styles.buttonText}
-                        onPress={this.onSignOut.bind(this)}/> */}
                         <Text style={styles.title}>Mis Reseñas</Text>
                         <OptionsMenu
                             button={MoreIcon}
