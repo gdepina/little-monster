@@ -1,15 +1,89 @@
 import React, {Component} from 'react';
-
-import {Dimensions, StyleSheet, Text, View, ScrollView, AppRegistry} from "react-native";
-
+import {Dimensions, StyleSheet, Text, View, ScrollView, AppRegistry, Modal, Alert, TouchableHighlight} from "react-native";
 import ImageOverlay from "react-native-image-overlay";
-
-import {Button} from 'react-native-elements';
+import {Button, ListItem} from 'react-native-elements';
 import { fontSize } from '../../../styles/Theme';
 
 //para obtener dimension de la pantalla
 const {width, height} = Dimensions.get('window');
 
+
+//Para borrar
+const list = [
+    {
+      name: 'Usr1',
+      subtitle: 'Mala'
+    },
+    {
+      name: 'Usr2',
+      subtitle: ' make a type specimen book. It has survived not o'
+    },
+    {
+        name: 'Usr3',
+        subtitle: ' make a type specimen book. It has survived not o'
+      },
+    {
+      name: 'Usr4',
+      subtitle: ' Latin literature from'
+    },
+    {
+      name: 'Usr5',
+      subtitle: 'Buena'
+    },
+    {
+       name: 'Usr6',
+        subtitle: 'd the undoubtable sourcsect'
+    },
+    {
+        name: 'Usr7',
+        subtitle: 'fered alteration in some form, b'
+    },
+  ]
+//
+
+class Modal extends React.Component {
+    render() {
+      // Render nothing if the "show" prop is false
+      if(!this.props.show) {
+        return null;
+      }
+  
+      // The gray background
+      const backdropStyle = {
+        position: 'fixed',
+        top: 0,
+        bottom: 0,
+        left: 0,
+        right: 0,
+        backgroundColor: 'rgba(0,0,0,0.3)',
+        padding: 50
+      };
+  
+      // The modal "window"
+      const modalStyle = {
+        backgroundColor: '#fff',
+        borderRadius: 5,
+        maxWidth: 500,
+        minHeight: 300,
+        margin: '0 auto',
+        padding: 30
+      };
+  
+      return (
+        <div className="backdrop" style={{backdropStyle}}>
+          <div className="modal" style={{modalStyle}}>
+            {this.props.children}
+  
+            <div className="footer">
+              <button onClick={this.props.onClose}>
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      );
+    }
+  }
 
 export default class MoviePoster extends Component{
     constructor() {
@@ -34,7 +108,7 @@ export default class MoviePoster extends Component{
                         raised
                         title={'Comentar'}
                         borderRadius={2}
-                        
+                        onPress={onPressLearnMore}
                 />
                 </View>
 
@@ -61,22 +135,60 @@ export default class MoviePoster extends Component{
     }
 
     buildComments() {
-        return (<view> //aca va modulo de comentarios.
-            
-        
-        
-        
-            </view>)
+        return ( <View style={styles.listcontainer}>
+            {
+              list.map((l, i) => (
+                <ListItem
+                  key={i}
+                  leftAvatar={{ source: { uri: l.avatar_url } }}
+                  title={l.name}
+                  subtitle={l.subtitle}
+                />
+              ))
+            }
+          </View>
+        )
     }
+
+/*buildComments() {
+        return ( <View style={styles.container}>
+            <List containerStyle={{ borderTopWidth: 0, borderBottomWidth: 0 }}>
+                <FlatList
+                    //data={matches ? Object.values(matches) : null}
+                    ItemSeparatorComponent={this.renderSeparator}
+                    ListFooterComponent={this.renderFooter}
+                    renderItem={({ item }) => (
+                        <ListItem
+                            key={item.id}
+                            roundAvatar
+                            title={item.name}
+                            subtitle={`${ "players" in item ? item.players.length : "0"} / ${item.matchSize} | ${item.locationName}` }
+                            containerStyle={{ borderBottomWidth: 0 }}
+                            onPress={() => this.onPressRow(item.id)}
+                        />
+                        )}
+                    keyExtractor={item => item.id}
+                />
+            </List>
+        </View>)
+        
+    }*/
+
+
+
+
 
     render() {
 
         return (
             <ScrollView style={styles.container}>
                 {this.buildPoster()}
+                {this.buildComments()}
             </ScrollView>
         )
     }
+
+    
 
     /*
     render() {
@@ -115,7 +227,12 @@ const styles = StyleSheet.create({
     general_description:{
         marginLeft: -55
 
+    },
+    listcontainer:{
+        marginTop: -170,
+        marginBottom: 20
     }
+
 
 });
 
