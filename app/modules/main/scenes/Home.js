@@ -60,27 +60,18 @@ class Home extends React.Component {
                     height: '100%',
                     justifyContent: 'center',
                 }}
-                source={require('./movie-flag.jpg')}
+                source={require('./background.png')}
             >
                 <View style={styles.container}>
-                <View style={styles.topBar}>
-                        <Text style={styles.title}>Mis Reseñas</Text>
-                        <OptionsMenu
-                            button={MoreIcon}
-                            buttonStyle={{ width: 40, height: 20, margin: 7.5, resizeMode: "contain" }}
-                            destructiveIndex={1}
-                            options={["BuscarPeliculas", "Cerrar Sesión"]}
-                            actions={[Actions.MatchList, this.onSignOut.bind(this)]}/>
-                </View>
-                    <Carousel
-                        autoplay
-                        autoplayTimeout={5000}
-                        loop
-                        index={0}
-                        pageSize={width}
-                    >
-                        {this.props.movies.map((item, index) => this.renderItem(item.Poster, index))}
-                    </Carousel>
+                    <View style={styles.topBar}>
+                            
+                            <OptionsMenu
+                                button={MoreIcon}
+                                buttonStyle={{ width: 40, height: 20, margin: 7.5, resizeMode: "contain" }}
+                                destructiveIndex={1}
+                                options={["BuscarPeliculas", "Cerrar Sesión"]}
+                                actions={[Actions.MatchList, this.onSignOut.bind(this)]}/>
+                    </View>
                 </View>
             </ImageBackground>
         );
@@ -110,9 +101,9 @@ const styles = StyleSheet.create({
         fontWeight:"500"
     },
     topBar:{
-        backgroundColor:bkgColor,
-        flexDirection: 'row',
-        justifyContent: 'space-between',
+        // backgroundColor:bkgColor,
+        // flexDirection: 'row',
+        justifyContent: 'flex-end',
         alignItems:"flex-end"
       },
     title:{
