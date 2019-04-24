@@ -33,7 +33,7 @@ class MovieList extends React.Component {
         this.state = {
             loading: true,
             data: null,
-            spinner: true,
+            spinner: false,
         }
     }
 
@@ -155,6 +155,7 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#2B2F32',
+        marginTop:24,
     },
     emptyContainer: {
         flex: 1,
