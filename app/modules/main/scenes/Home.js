@@ -3,8 +3,7 @@ const { View, StyleSheet, Alert, ImageBackground, Text, Dimensions, Image } = re
 
 import {Actions} from 'react-native-router-flux';
 import {connect} from 'react-redux';
-
-
+import OptionsMenu from 'react-native-options-menu';
 import Colors from '../../../config/Colors';
 
 import { actions as auth } from "../../auth"
@@ -13,8 +12,8 @@ import {actions, reducer as mainReducer} from "../"
 const { loadMovies } = actions;
 
 const {width, height} = Dimensions.get('window');
-
-const bkgColor = Colors.tintColor;
+const MoreIcon = require('./assets/more.png');
+const bkgColor = '#397AF8';
 
 class Home extends React.Component {
     constructor(){
@@ -59,13 +58,13 @@ class Home extends React.Component {
             >
                 <View style={styles.container}>
                     <View style={styles.topBar}>
-                            
+                            <Text style={styles.title}>Mis Reseñas</Text>
                             <OptionsMenu
                                 button={MoreIcon}
                                 buttonStyle={{ width: 40, height: 20, margin: 7.5, resizeMode: "contain" }}
                                 destructiveIndex={1}
-                                options={["BuscarPeliculas", "Cerrar Sesión"]}
-                                actions={[Actions.MatchList, this.onSignOut.bind(this)]}/>
+                                options={["Cerrar Sesión"]}
+                                actions={[this.onSignOut.bind(this)]}/>
                     </View>
                 </View>
             </ImageBackground>
@@ -96,15 +95,18 @@ const styles = StyleSheet.create({
         fontWeight:"500"
     },
     topBar:{
-        // backgroundColor:bkgColor,
-        // flexDirection: 'row',
-        justifyContent: 'flex-end',
-        alignItems:"flex-end"
+        backgroundColor: bkgColor,
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems:"center",
+        marginTop: 25,
+        height: 55
       },
     title:{
         fontSize:20,
         fontWeight: 'bold',
-        color: '#ffffff'
+        color: '#ffffff',
+        marginLeft: 15        
     }
 });
 

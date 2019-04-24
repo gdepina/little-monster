@@ -6,7 +6,7 @@ import Splash from '../modules/splash/Splash';
 import Home from '../modules/main/scenes/Home';
 //import MatchCreator from '../modules/main/scenes/MatchCreator';
 import Detail from '../modules/main/scenes/Detail';
-import MatchList from '../modules/main/scenes/MovieList';
+import MovieList from '../modules/main/scenes/MovieList';
 import Explore from '../modules/main/scenes/Explore';
 import TabBarIcon from './TabBarIcon'
 
@@ -45,21 +45,9 @@ class Routes extends React.Component {
         });
     }
 
-    renderRightButton() {
-        return ( <View >
-            <OptionsMenu
-                button={MoreIcon}
-                buttonStyle={{ width: 40, height: 20, margin: 7.5, resizeMode: "contain" }}
-                destructiveIndex={1}
-                options={["BuscarPeliculas", "Cerrar Sesión"]}
-                actions={[Actions.MatchList]}/>
-    </View>)
-    }
-
     render() {
         if (!this.state.isReady)
             return <Splash/>
-
 
         const icon =  ({ focused, type }) => (
             <TabBarIcon
@@ -85,10 +73,9 @@ class Routes extends React.Component {
 
                     <Stack key="Main" initial={this.state.isLoggedIn}>
                         <Scene key='root' tabs={true} hideNavBar>
-                            {/*<Scene key="MatchCreator" component={MatchCreator} title="Crea tu partido" user={this.state.user} />*/}
                             <Scene key="Explore" component={Explore} title="Explorar" user={this.state.user} icon={(focused) => icon({focused, type: 'podium'})}/>
-                            <Scene key="MatchList" component={MatchList} title="Buscar" user={this.state.user} icon={(focused) => icon({focused, type: 'search'})}/>
-                            <Scene key="Home" component={Home} title="Mis Reseñas" type={ActionConst.REPLACE} initial={true} icon={(focused) => icon({focused, type: 'contact'})} rightTitle='MoreOps' rightButtonImage={MoreIcon} onRight={()=>{}}/>                            
+                            <Scene key="MovieList" component={MovieList} title="Buscar" user={this.state.user} icon={(focused) => icon({focused, type: 'search'})}/>
+                            <Scene key="Home" component={Home} title="Perfil" type={ActionConst.REPLACE} initial={true} icon={(focused) => icon({focused, type: 'contact'})} hideNavBar />                            
                         </Scene>
                         <Scene key="Detail" component={Detail} title="Detalle"  user={this.state.user} />
                     </Stack>
@@ -113,6 +100,6 @@ const styles = StyleSheet.create({
     },
     barButtonIconStyle:{
         tintColor:'#FFFFFF'
-    },
+    }
 
 });
