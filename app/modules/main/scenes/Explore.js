@@ -63,7 +63,7 @@ class Explore extends React.Component {
                         index={0}
                         pageSize={width}
                     >
-                        {this.props.movies.map((item, index) => this.renderItem(item.Poster, index))}
+                        {this.props.movies && this.props.movies.map((item, index) => this.renderItem(item.Poster, index))}
                     </Carousel>
                     <Carousel
                         autoplay
@@ -72,7 +72,7 @@ class Explore extends React.Component {
                         index={0}
                         pageSize={width}
                     >
-                        {this.props.movies.map((item, index) => this.renderItem(item.Poster, index))}
+                        {this.props.movies && this.props.movies.map((item, index) => this.renderItem(item.Poster, index))}
                     </Carousel>
                 </View>
             </ImageBackground>

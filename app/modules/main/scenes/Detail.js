@@ -7,12 +7,11 @@ import { actions } from "../"
 import { MaterialIcons, Foundation } from '@expo/vector-icons';
 
 import Colors from "../../../config/Colors";
-const { loadMovie } = actions;
+const { loadMovie, like } = actions;
 
 //para obtener dimension de la pantalla
 const { width, height } = Dimensions.get('window');
 
-const padding = 8;
 
 //Prueba de lista de comentarios
 const list = [
@@ -52,9 +51,13 @@ class MoviePoster extends Component {
     constructor() {
         super();
         this.buildPoster = this.buildPoster.bind(this);
+        this.onLike = this.onLike.bind(this);
+        this.onDisLike = this.onDisLike.bind(this);
+        this.like = this.like.bind(this);
         this.buildModal = this.buildModal.bind(this);
         this.addComment = this.addComment.bind(this);
         this.closeComment = this.closeComment.bind(this);
+
         this.state = {
             isModalVisible: false,
             value: 'Ingresa tu comentario'
@@ -67,11 +70,24 @@ class MoviePoster extends Component {
     }
 
     onLike() {
-
+        this.like(true);
     }
 
     onDisLike() {
+        this.like(false);
+    }
 
+    like(isPositive) {
+        const {imdbID, Title,} = this.props.currentMovie;
+        const {uid, displayName} = this.props.user;
+
+        this.props.like({
+            omdbId: imdbID,
+            isPositive,
+            movieName: Title,
+            userName: displayName,
+            userId: uid
+        });
     }
 
     buildComments() {
@@ -103,7 +119,7 @@ class MoviePoster extends Component {
 
 
     buildPoster() {
-        const { Poster, Title, description, Runtime, Year } = this.props.currentMovie;
+        const { Poster, Title, description, Runtime, Year, positiveCount, negativeCount } = this.props.currentMovie;
         return (<View style={styles.container}>
             <PosterCmp image={Poster} title={Title} description={description} contentPosition="bottom" height={height * 0.5}>
                 <View style={styles.iconContainer}>
@@ -114,7 +130,7 @@ class MoviePoster extends Component {
                                 size={35}
                                 color={Colors.tabIconDefault}
                             />
-                            <Text style={{ color: 'green' }}>952</Text>
+                            <Text style={{ color: 'green', fontWeight: 'bold', }}>{positiveCount}</Text>
                         </TouchableOpacity>
                         <TouchableOpacity onPress={this.onDisLike}>
                             <Foundation
@@ -122,7 +138,7 @@ class MoviePoster extends Component {
                                 size={35}
                                 color={Colors.tabIconDefault}
                             />
-                            <Text style={{ color: 'red' }}>324</Text>
+                            <Text style={{ color: 'red', fontWeight: 'bold', }}>{negativeCount}</Text>
                         </TouchableOpacity>
                     </View>
                     <View style={styles.button}>
@@ -196,12 +212,12 @@ const styles = StyleSheet.create({
     },
     button: {
     },
-    
+
     buttonContainer:{
         //width: 250,
         left: width*0.015,
         //alignItems: 'center',
-        marginVertical:padding, marginHorizontal:0,
+        marginVertical:8, marginHorizontal:0,
     },
 
     rate: {
@@ -249,6 +265,6 @@ function mapStateToProps(state, props) {
     }
 }
 
-export default connect(mapStateToProps, { loadMovie })(MoviePoster);
+export default connect(mapStateToProps, { loadMovie, like })(MoviePoster);
 
 
