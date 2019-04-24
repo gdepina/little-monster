@@ -1,20 +1,16 @@
 import actionType from './actionTypes';
 import * as api from './api';
 
-export function loadMovies(key) {
+export function loadMovies(search) {
     return dispatch => {
         dispatch({
             type: actionType.LOAD_MATCHES_REQUEST
         })
-        api.getMovies()
+        api.getMovies(search)
             .then(res => {
                 dispatch({
                     type: actionType.LOAD_MATCHES_SUCCESS,
                     payload: res,
-                }),
-                key && dispatch({
-                    type: actionType.ADD_MATCH_SUCCESS,
-                    payload: key,
                 })
             })
             .catch(error => {
@@ -26,16 +22,16 @@ export function loadMovies(key) {
     }
 }
 
-export function loadMatch(key) {
+export function loadMovie(key) {
     return dispatch => {
         dispatch({
             type: actionType.LOAD_MATCHES_REQUEST
         })
-        api.getMatchDB(key)
-            .then(match => {
+        api.getMovie(key)
+            .then(res => {
                 dispatch({
                     type: actionType.LOAD_CURRENT_MATCH_SUCCESS,
-                    payload: match.val()
+                    payload: res,
                 })
             })
             .catch(error => {

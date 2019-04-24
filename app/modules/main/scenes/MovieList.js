@@ -1,58 +1,53 @@
 import React from 'react';
 
-var {View, StyleSheet, Dimensions, FlatList, ActivityIndicator } = require('react-native');
+const {View, StyleSheet, Dimensions, FlatList, ActivityIndicator, TouchableOpacity} = require('react-native');
 
-import { SearchBar, List, ListItem } from 'react-native-elements'
+import Spinner from 'react-native-loading-spinner-overlay';
+
+import {SearchBar, List, ListItem} from 'react-native-elements'
+import PosterCmp from '../components/Poster';
+import debounce from 'lodash.debounce';
+import isEqual from 'lodash.isequal';
+import LottieView from "lottie-react-native";
 
 import {connect} from 'react-redux';
+const movie = require('./assets/sorry.json');
 
 
-import { actions } from "../"
-import * as Theme from "../../../styles/Theme";
-const {padding} = Theme;
-import { AppFontLoader } from '../../AppFontLoader';
-import Geocoder from 'react-native-geocoding';
+import {actions} from "../"
+import {AppFontLoader} from '../../AppFontLoader';
 import {Actions} from "react-native-router-flux";
+import {Text} from "react-native";
 
 
-const device_width = Dimensions.get('window').width;
-<<<<<<< HEAD
-
-const { loadMatchs, loadMatch } = actions;
-=======
 const { loadMovies } = actions;
->>>>>>> 5a0ffffdf05494b0d901d792b11a9688f3fff1f7
+
+const {width, height} = Dimensions.get('window');
 
 class MovieList extends React.Component {
     constructor() {
         super();
-        this.getMatches = this.getMatches.bind(this);
         this.filterByValue = this.filterByValue.bind(this);
         this.renderFooter = this.renderFooter.bind(this);
 
         this.state = {
-            loading: false,
+            loading: true,
             data: null,
+            spinner: true,
         }
-        Geocoder.init('AIzaSyDj9i_GKdG2tV2mL-Nd78ZWg8_yp2abGYo');
     }
 
     componentDidMount() {
-        //this.props.loadMatchs();
+        this.props.loadMovies();
     }
 
     componentWillReceiveProps(nextProps) {
-        const { matches, user, myMatchs } = nextProps;
-
-
-        this.setState({
-            matches: myMatchs ? Object.values(matches).filter(o => o.organizatorId === user.uid) : matches,
-        })
-    }
-
-    getMatches() {
-        const { matches, user, myMatchs } = this.props;
-        return myMatchs ? Object.values(this.props.matches).filter(o => o.organizatorId === user.uid) : matches
+        const { movies } = nextProps;
+        if (!isEqual(nextProps.movies, this.props.movies)) {
+            this.setState({
+                spinner: !(movies && movies.length) && movies !== "",
+            })
+        }
     }
 
 
@@ -69,22 +64,15 @@ class MovieList extends React.Component {
     }
 
     filterByValue(text) {
-        const matches = this.getMatches();
-        const matchesFiltered = Object.values(matches).filter(o => {
-            return Object.keys(o).some(k => {
-                return typeof o[k] === 'string' && o[k].toLowerCase().includes(text.toLowerCase())
-            })
-        });
-
-        this.setState({
-            matches: matchesFiltered,
-            value: text,
-        })
+        this.props.loadMovies(text)
     }
 
 
     renderHeader() {
-        return <SearchBar noIcon round lightTheme onChangeText={this.filterByValue} value={this.state.value} onClearText={null} placeholder='Partido de pepo...' />;
+        const debounced = debounce((text) => this.filterByValue(text), 300);
+        ;
+        return <SearchBar round onChangeText={(text) => debounced(text)} value={this.state.value}
+                          onClearText={null} placeholder='Busca tu serie o peli favorita'/>;
     }
 
     renderFooter() {
@@ -98,7 +86,7 @@ class MovieList extends React.Component {
                     borderColor: "#CED0CE"
                 }}
             >
-                <ActivityIndicator animating size="large" />
+                <ActivityIndicator animating size="large"/>
             </View>
         );
     };
@@ -110,27 +98,27 @@ class MovieList extends React.Component {
 
 
     render() {
-
-        const matches = this.state.matches || this.props.matches;
+        const movies = this.state.movies || this.props.movies;
         return (
             <AppFontLoader>
+                <Spinner
+                    visible={this.state.spinner}
+                    textContent={'One moment...'}
+                    textStyle={{ color: '#fff' }} />
                 <View style={styles.container}>
-                    { this.renderHeader() }
-                    <List containerStyle={{ borderTopWidth: 0, borderBottomWidth: 0 }}>
+                    {this.renderHeader()}
+                    <List containerStyle={{borderTopWidth: 0, borderBottomWidth: 0, top:-20}}>
                         <FlatList
-                            data={matches ? Object.values(matches) : null}
+                            data={movies ? Object.values(movies) : null}
                             ItemSeparatorComponent={this.renderSeparator}
-                            ListFooterComponent={this.renderFooter}
-                            renderItem={({ item }) => (
-                                <ListItem
-                                    key={item.id}
-                                    roundAvatar
-                                    title={item.name}
-                                    subtitle={`${ "players" in item ? item.players.length : "0"} / ${item.matchSize} | ${item.locationName}` }
-                                    containerStyle={{ borderBottomWidth: 0 }}
-                                    onPress={() => this.onPressRow(item.id)}
-                                />
-                                )}
+                            ListEmptyComponent={!this.state.spinner && this.getListEmptyComponent}
+                            // ListFooterComponent={this.renderFooter}
+                            renderItem={({item}) => (
+                                <TouchableOpacity onPress={() => this.onPressRow(item.imdbID)}>
+                                    <PosterCmp image={item.Poster} title={item.Title} description={`${item.Year} | ${item.Type}`} contentPosition="center" height={height*0.3}>
+                                    </PosterCmp>
+                                </TouchableOpacity>
+                            )}
                             keyExtractor={item => item.id}
                         />
                     </List>
@@ -139,22 +127,54 @@ class MovieList extends React.Component {
 
         )
     }
+
+    getListEmptyComponent() {
+        return (<View style={styles.emptyContainer}>
+            <LottieView
+                source={movie}
+                style={styles.movie}
+                loop
+                autoPlay
+            />
+            <Text style={styles.shadow}>Ops, no encontramos resultados para tu busqueda</Text>
+        </View>)
+    }
 }
 
 function mapStateToProps(state, props) {
     return {
-        matches:  state.mainReducer.matches,
-        user:  state.authReducer.user,
+        movies: state.mainReducer.movies,
+        user: state.authReducer.user,
     }
 }
 
-export default connect(mapStateToProps,null)(MovieList);
+export default connect(mapStateToProps, {loadMovies})(MovieList);
 
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#fff',
+        backgroundColor: '#2B2F32',
+    },
+    emptyContainer: {
+        flex: 1,
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: '#2B2F32',
+    },
+    movie: {
+        width: width,
+        height: height*0.5,
+    },
+    shadow: {
+        color: '#fff',
+        textShadowOffset: { width: 2, height: 2 },
+        textShadowRadius: 1,
+        textShadowColor: '#000',
+        fontSize: 20,
+        fontWeight: 'bold',
+        width: width*0.8,
+        textAlign: 'center',
     }
 });
 

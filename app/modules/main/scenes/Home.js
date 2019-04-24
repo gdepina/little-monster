@@ -4,11 +4,7 @@ const { View, StyleSheet, Alert, ImageBackground, Text, Dimensions, Image } = re
 import {Actions} from 'react-native-router-flux';
 import {connect} from 'react-redux';
 
-import Carousel from 'react-native-banner-carousel';
-import Mock from './mock.json'
 
-
-import OptionsMenu from 'react-native-options-menu';
 import Colors from '../../../config/Colors';
 
 import { actions as auth } from "../../auth"
@@ -18,7 +14,6 @@ const { loadMovies } = actions;
 
 const {width, height} = Dimensions.get('window');
 
-const MoreIcon = require('./more.png');
 const bkgColor = Colors.tintColor;
 
 class Home extends React.Component {
@@ -60,27 +55,9 @@ class Home extends React.Component {
                     height: '100%',
                     justifyContent: 'center',
                 }}
-                source={require('./movie-flag.jpg')}
+                source={require('./assets/movie-flag.jpg')}
             >
                 <View style={styles.container}>
-                <View style={styles.topBar}>
-                        <Text style={styles.title}>Mis Reseñas</Text>
-                        <OptionsMenu
-                            button={MoreIcon}
-                            buttonStyle={{ width: 40, height: 20, margin: 7.5, resizeMode: "contain" }}
-                            destructiveIndex={1}
-                            options={["BuscarPeliculas", "Cerrar Sesión"]}
-                            actions={[Actions.MatchList, this.onSignOut.bind(this)]}/>
-                </View>
-                    <Carousel
-                        autoplay
-                        autoplayTimeout={5000}
-                        loop
-                        index={0}
-                        pageSize={width}
-                    >
-                        {this.props.movies.map((item, index) => this.renderItem(item.Poster, index))}
-                    </Carousel>
                 </View>
             </ImageBackground>
         );
