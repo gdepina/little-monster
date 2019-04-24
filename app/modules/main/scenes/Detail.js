@@ -111,25 +111,25 @@ class MoviePoster extends Component {
                         <TouchableOpacity onPress={this.onLike} style={{ marginRight: 25 }}>
                             <Foundation
                                 name={'like'}
-                                size={35}
+                                size={45}
                                 color={Colors.tabIconDefault}
                             />
-                            <Text style={{ color: 'green' }}>952</Text>
+                            <Text style={{ color: 'green', fontSize: 22 }}>952</Text>
                         </TouchableOpacity>
                         <TouchableOpacity onPress={this.onDisLike}>
                             <Foundation
                                 name={'dislike'}
-                                size={35}
+                                size={45}
                                 color={Colors.tabIconDefault}
                             />
-                            <Text style={{ color: 'red' }}>324</Text>
+                            <Text style={{ color: 'red', fontSize: 22}}>324</Text>
                         </TouchableOpacity>
                     </View>
                     <View style={styles.button}>
                         <TouchableOpacity onPress={this.addComment}>
                             <MaterialIcons
                                 name={'rate-review'}
-                                size={35}
+                                size={45}
                                 color={Colors.tabIconDefault}
                             />
                         </TouchableOpacity>
@@ -208,6 +208,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
     },
     iconContainer: {
+        shadowColor: "black",
         flexDirection: 'row',
         justifyContent: 'space-between',
     },

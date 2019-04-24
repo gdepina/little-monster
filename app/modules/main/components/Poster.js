@@ -22,7 +22,7 @@ class Poster extends Component {
 }
 
 const styles = StyleSheet.create({
-    description: {fontSize: 20, fontWeight: 'bold'},
+    description: {fontSize: 23, fontWeight: 'bold'},
     contentContainer: {
         flex: 1,
         justifyContent: 'flex-end',
@@ -38,7 +38,7 @@ const styles = StyleSheet.create({
         marginBottom: 20,
     },
     title: {
-        fontSize: 20,
+        fontSize: 26,
         fontWeight: 'bold',
         color: '#fff',
         textShadowOffset: { width: 2, height: 2 },
