@@ -19,8 +19,10 @@ import {AppFontLoader} from '../../AppFontLoader';
 import {Actions} from "react-native-router-flux";
 import {Text} from "react-native";
 
+
+const { loadMovies } = actions;
+
 const {width, height} = Dimensions.get('window');
-const {loadMovies} = actions;
 
 class MovieList extends React.Component {
     constructor() {
