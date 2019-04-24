@@ -1,11 +1,9 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Dimensions, StyleSheet, View, ScrollView, TouchableOpacity, Text, Modal, Button } from "react-native";
-//import { TextInput } from 'react-native-paper';
 import { ListItem, FormInput, FormLabel } from 'react-native-elements';
 import PosterCmp from '../components/Poster';
 import { actions } from "../"
-
 import { MaterialIcons, Foundation } from '@expo/vector-icons';
 
 import Colors from "../../../config/Colors";
@@ -14,6 +12,7 @@ const { loadMovie } = actions;
 //para obtener dimension de la pantalla
 const { width, height } = Dimensions.get('window');
 
+const padding = 8;
 
 //Prueba de lista de comentarios
 const list = [
@@ -153,35 +152,40 @@ class MoviePoster extends Component {
 
     buildModal() {
         return (
-                <Modal visible={this.state.isModalVisible} animationType="fade" transparent={true}>
-                    <View style={styles.modal}>
-                        <View style={{width: 280, height:220}}>
+            <Modal visible={this.state.isModalVisible} animationType="fade" transparent={true}>
+                <View style={styles.modal}>
+                    <View style={{ width: 280, height: 270 }}>
                         <FormLabel></FormLabel>
-                            <FormInput
-                                inputStyle={styles.textInput}
-                                multiline= {true}
-                                placeholder= 'Ingresa tu comentario...'
-                                textarea value={this.state.value}
-                                onChangeText={(text) => this.setState({ text })}
-                                value={this.state.text}
-                            />
-                            <Button
-                                onPress={() => this.closeComment()}
-                                title="Cerrar"
-                            >
-                            </Button>
+                        <FormInput
+                            inputStyle={styles.textInput}
+                            multiline={true}
+                            placeholder='Ingresa tu comentario...'
+                            textarea value={this.state.value}
+                            maxLength={200}
+                            onChangeText={(text) => this.setState({ text })}
+                            value={this.state.text}
+                        />
+                        <View style={[{ width: "89%", margin: 12, backgroundColor: "blue" }]}>
                             <Button
                                 onPress={() => this.closeComment()}
                                 title="Guardar"
+                                color="#00B0FF"
+                            />
+                        </View>
+                        <View style={[{ width: "89%", margin: 12, backgroundColor: "red" }]}>
+                            <Button
+                                onPress={() => this.closeComment()}
+                                title="Cerrar"
+                                color='#FB6567'
                             >
                             </Button>
                         </View>
                     </View>
-                </Modal>
+                </View>
+            </Modal>
         )
     }
 }
-
 
 
 
@@ -192,6 +196,14 @@ const styles = StyleSheet.create({
     },
     button: {
     },
+    
+    buttonContainer:{
+        //width: 250,
+        left: width*0.015,
+        //alignItems: 'center',
+        marginVertical:padding, marginHorizontal:0,
+    },
+
     rate: {
         flexDirection: 'row',
     },
@@ -203,11 +215,11 @@ const styles = StyleSheet.create({
     },
 
     modal: {
-        height: height*0.5,
-        width: width*0.9,
+        height: height*0.4,
+        width: width*0.75,
         position: 'absolute',
         top: height*0.2,
-        left: width*0.05,
+        left: width*0.15,
         backgroundColor: '#f1f1f1',
         justifyContent: 'center',
         alignItems: 'center',
@@ -218,13 +230,14 @@ const styles = StyleSheet.create({
     },
 
     textInput: {
-        height: 100,
+        height: 170,
         width: 250,
+        //paddingVertical: 5,
+        position: 'relative',
+        //top: -2,
         borderColor: 'gray',
         borderWidth: 1,
-        /*autoCapitalize:'sentences',
-        blurOnSubmit:'true'
-        */
+
     }
 
 });
