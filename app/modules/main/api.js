@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 import firebase from "../../config/firebase";
-import { API_URL } from "../../config/constants";
+import {API_URL} from "../../config/constants";
 
 const database = firebase.database();
 import matchModel from '../../models/match'
@@ -13,6 +13,7 @@ export async function getMovies(search) {
     let response = await axios.get(url);
     return response.data;
 }
+
 // get specified section
 export async function getMovie(movieId) {
     let url = `${API_URL}/movies/${movieId}`;
@@ -20,12 +21,22 @@ export async function getMovie(movieId) {
     return response.data;
 }
 
+// get specified section
+export async function getComments(userId) {
+    let url = `${API_URL}/comments/${userId}`;
+    let response = await axios.get(url);
+    return response.data;
+}
+
 
 // add new section
-export function addMatch(name, orgId, matchSize, courtType, location, datetime, locationName, players, phoneNumber) {
-    let key = database.ref('/match').push().key
-    let model = matchModel(key, name, firebase.database.ServerValue.TIMESTAMP, orgId, matchSize, courtType, location, datetime, locationName, players, phoneNumber)
-    return { prom: database.ref('/match/'+ key).set(model), key}
+export async function like(opt) {
+    let url = `${API_URL}/rates`;
+    const body = {
+        ...opt
+    }
+    let response = await axios.put(url, body);
+    return response.data;
 }
 
 
@@ -35,8 +46,12 @@ export function addPlayerItem(matchId, playerId, email, displayName) {
             let players = player.val() || [];
             players.push(playerModel(playerId, email, displayName))
             database.ref(`/match/${matchId}/players`).set(players)
-                .then( res => {resolve(res)})
-                .catch( error => {reject(error)})
+                .then(res => {
+                    resolve(res)
+                })
+                .catch(error => {
+                    reject(error)
+                })
         })
     })
 }
@@ -48,8 +63,12 @@ export function removePlayerItem(matchId, playerId) {
             const indexPlayer = players.findIndex(player => player.id === playerId);
             players.splice(indexPlayer, 1);
             database.ref(`/match/${matchId}/players`).set(players)
-                .then( res => {resolve(res)})
-                .catch( error => {reject(error)})
+                .then(res => {
+                    resolve(res)
+                })
+                .catch(error => {
+                    reject(error)
+                })
         })
     })
 }

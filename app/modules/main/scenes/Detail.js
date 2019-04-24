@@ -1,15 +1,13 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { Dimensions, StyleSheet, View, ScrollView, TouchableOpacity, Text } from "react-native";
-
-import { ListItem } from 'react-native-elements';
+import { Dimensions, StyleSheet, View, ScrollView, TouchableOpacity, Text, Modal, Button } from "react-native";
+import { ListItem, FormInput, FormLabel } from 'react-native-elements';
 import PosterCmp from '../components/Poster';
 import { actions } from "../"
-
 import { MaterialIcons, Foundation } from '@expo/vector-icons';
 
 import Colors from "../../../config/Colors";
-const { loadMovie } = actions;
+const { loadMovie, like } = actions;
 
 //para obtener dimension de la pantalla
 const { width, height } = Dimensions.get('window');
@@ -47,10 +45,24 @@ const list = [
     },
 ]
 
+
+
 class MoviePoster extends Component {
     constructor() {
         super();
         this.buildPoster = this.buildPoster.bind(this);
+        this.onLike = this.onLike.bind(this);
+        this.onDisLike = this.onDisLike.bind(this);
+        this.like = this.like.bind(this);
+        this.buildModal = this.buildModal.bind(this);
+        this.addComment = this.addComment.bind(this);
+        this.closeComment = this.closeComment.bind(this);
+
+        this.state = {
+            isModalVisible: false,
+            value: 'Ingresa tu comentario'
+        };
+
     }
 
     componentDidMount() {
@@ -58,11 +70,24 @@ class MoviePoster extends Component {
     }
 
     onLike() {
-
+        this.like(true);
     }
 
     onDisLike() {
+        this.like(false);
+    }
 
+    like(isPositive) {
+        const {imdbID, Title,} = this.props.currentMovie;
+        const {uid, displayName} = this.props.user;
+
+        this.props.like({
+            omdbId: imdbID,
+            isPositive,
+            movieName: Title,
+            userName: displayName,
+            userId: uid
+        });
     }
 
     buildComments() {
@@ -82,10 +107,19 @@ class MoviePoster extends Component {
     }
     addComment() {
 
+        this.setState({ isModalVisible: !this.state.isModalVisible });
+
+
     }
 
+    closeComment() {
+        this.setState({ isModalVisible: false });
+    }
+
+
+
     buildPoster() {
-        const { Poster, Title, description, Runtime, Year } = this.props.currentMovie;
+        const { Poster, Title, description, Runtime, Year, positiveCount, negativeCount } = this.props.currentMovie;
         return (<View style={styles.container}>
             <PosterCmp image={Poster} title={Title} description={description} contentPosition="bottom" height={height * 0.5}>
                 <View style={styles.iconContainer}>
@@ -96,7 +130,7 @@ class MoviePoster extends Component {
                                 size={35}
                                 color={Colors.tabIconDefault}
                             />
-                            <Text style={{ color: 'green' }}>952</Text>
+                            <Text style={{ color: 'green', fontWeight: 'bold', }}>{positiveCount}</Text>
                         </TouchableOpacity>
                         <TouchableOpacity onPress={this.onDisLike}>
                             <Foundation
@@ -104,7 +138,7 @@ class MoviePoster extends Component {
                                 size={35}
                                 color={Colors.tabIconDefault}
                             />
-                            <Text style={{ color: 'red' }}>324</Text>
+                            <Text style={{ color: 'red', fontWeight: 'bold', }}>{negativeCount}</Text>
                         </TouchableOpacity>
                     </View>
                     <View style={styles.button}>
@@ -127,19 +161,65 @@ class MoviePoster extends Component {
             <ScrollView style={styles.container}>
                 {this.props.currentMovie && this.buildPoster()}
                 {this.buildComments()}
+                {this.buildModal()}
             </ScrollView>
         )
     }
 
-
+    buildModal() {
+        return (
+            <Modal visible={this.state.isModalVisible} animationType="fade" transparent={true}>
+                <View style={styles.modal}>
+                    <View style={{ width: 280, height: 270 }}>
+                        <FormLabel></FormLabel>
+                        <FormInput
+                            inputStyle={styles.textInput}
+                            multiline={true}
+                            placeholder='Ingresa tu comentario...'
+                            textarea value={this.state.value}
+                            maxLength={200}
+                            onChangeText={(text) => this.setState({ text })}
+                            value={this.state.text}
+                        />
+                        <View style={[{ width: "89%", margin: 12, backgroundColor: "blue" }]}>
+                            <Button
+                                onPress={() => this.closeComment()}
+                                title="Guardar"
+                                color="#00B0FF"
+                            />
+                        </View>
+                        <View style={[{ width: "89%", margin: 12, backgroundColor: "red" }]}>
+                            <Button
+                                onPress={() => this.closeComment()}
+                                title="Cerrar"
+                                color='#FB6567'
+                            >
+                            </Button>
+                        </View>
+                    </View>
+                </View>
+            </Modal>
+        )
+    }
 }
+
+
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#fff',
     },
-    button: {},
+    button: {
+    },
+
+    buttonContainer:{
+        //width: 250,
+        left: width*0.015,
+        //alignItems: 'center',
+        marginVertical:8, marginHorizontal:0,
+    },
+
     rate: {
         flexDirection: 'row',
     },
@@ -148,6 +228,32 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
     },
     listcontainer: {
+    },
+
+    modal: {
+        height: height*0.4,
+        width: width*0.75,
+        position: 'absolute',
+        top: height*0.2,
+        left: width*0.15,
+        backgroundColor: '#f1f1f1',
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderRadius: 2,
+        borderColor: 'rgba(0, 0, 0, 0.1)',
+        shadowColor: 'black',
+        shadowOpacity: 5.0,
+    },
+
+    textInput: {
+        height: 170,
+        width: 250,
+        //paddingVertical: 5,
+        position: 'relative',
+        //top: -2,
+        borderColor: 'gray',
+        borderWidth: 1,
+
     }
 
 });
@@ -159,6 +265,6 @@ function mapStateToProps(state, props) {
     }
 }
 
-export default connect(mapStateToProps, { loadMovie })(MoviePoster);
+export default connect(mapStateToProps, { loadMovie, like })(MoviePoster);
 
 

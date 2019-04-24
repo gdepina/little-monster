@@ -1,7 +1,7 @@
 import t from './actionTypes';
 import { NET_INFO_CHANGED } from 'react-native-redux-listener';
 
-let initialState = { isConnected: false, data: [], movies: [], currentMovie: null };
+let initialState = { isConnected: false, data: [], movies: [], currentMovie: null, comments: [] };
 
 const moviesReducer = (state = initialState, action) => {
     switch (action.type) {
@@ -11,6 +11,10 @@ const moviesReducer = (state = initialState, action) => {
 
         case t.LOAD_MATCHES_SUCCESS:
             state = Object.assign({}, state, {movies: action.payload });
+            return state;
+
+        case t.LOAD_COMMENTS_SUCCESS:
+            state = Object.assign({}, state, {comments: action.payload });
             return state;
 
         case t.LOAD_CURRENT_MATCH_SUCCESS:
