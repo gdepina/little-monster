@@ -7,14 +7,17 @@ const database = firebase.database();
 import matchModel from '../../models/match'
 import playerModel from '../../models/player'
 
-export async function getMovies() {
+export async function getMovies(search) {
     let url = `${API_URL}/movies`;
+    if (search) url += `?s=${search}`;
     let response = await axios.get(url);
     return response.data;
 }
 // get specified section
-export function getMatchDB(matchId) {
-    return database.ref(`/match/${matchId}`).once('value')
+export async function getMovie(movieId) {
+    let url = `${API_URL}/movies/${movieId}`;
+    let response = await axios.get(url);
+    return response.data;
 }
 
 

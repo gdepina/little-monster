@@ -4,11 +4,7 @@ const { View, StyleSheet, Alert, ImageBackground, Text, Dimensions, Image } = re
 import {Actions} from 'react-native-router-flux';
 import {connect} from 'react-redux';
 
-import Carousel from 'react-native-banner-carousel';
-import Mock from './mock.json'
 
-
-import OptionsMenu from 'react-native-options-menu';
 import Colors from '../../../config/Colors';
 
 import { actions as auth } from "../../auth"
@@ -18,7 +14,6 @@ const { loadMovies } = actions;
 
 const {width, height} = Dimensions.get('window');
 
-const MoreIcon = require('./more.png');
 const bkgColor = Colors.tintColor;
 
 class Home extends React.Component {

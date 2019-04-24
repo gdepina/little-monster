@@ -4,8 +4,9 @@ import { Provider } from 'react-redux';
 
 import Router from './app/config/routes'
 import store from './app/redux/store';
-
+console.disableYellowBox = true;
 export default class App extends Component {
+
     render() {
         return (
             <Provider store={store}>

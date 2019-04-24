@@ -90,7 +90,7 @@ class Routes extends React.Component {
                             <Scene key="MatchList" component={MatchList} title="Buscar" user={this.state.user} icon={(focused) => icon({focused, type: 'search'})}/>
                             <Scene key="Home" component={Home} title="Mis Reseñas" type={ActionConst.REPLACE} initial={true} icon={(focused) => icon({focused, type: 'contact'})} rightTitle='MoreOps' rightButtonImage={MoreIcon} onRight={()=>{}}/>                            
                         </Scene>
-                        <Scene key="Detail" component={Detail} title="Partido"  user={this.state.user} />
+                        <Scene key="Detail" component={Detail} title="Detalle"  user={this.state.user} />
                     </Stack>
                 </Scene>
             </Router>
