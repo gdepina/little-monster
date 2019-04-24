@@ -6,7 +6,8 @@ import Splash from '../modules/splash/Splash';
 import Home from '../modules/main/scenes/Home';
 //import MatchCreator from '../modules/main/scenes/MatchCreator';
 import Detail from '../modules/main/scenes/Detail';
-import MatchList from '../modules/main/scenes/MovieList';
+import MovieList from '../modules/main/scenes/MovieList';
+import Explore from '../modules/main/scenes/Explore';
 import TabBarIcon from './TabBarIcon'
 
 import Welcome from '../modules/auth/scenes/Welcome';
@@ -16,6 +17,8 @@ import Login from '../modules/auth/scenes/Login';
 import firebase from "../config/firebase"
 import { actions } from "../modules/auth"
 import {connect} from 'react-redux';
+
+const MoreIcon = require('./more.png');
 
 const { storeUser } = actions;
 
@@ -46,7 +49,6 @@ class Routes extends React.Component {
         if (!this.state.isReady)
             return <Splash/>
 
-
         const icon =  ({ focused, type }) => (
             <TabBarIcon
               focused={focused}
@@ -71,9 +73,9 @@ class Routes extends React.Component {
 
                     <Stack key="Main" initial={this.state.isLoggedIn}>
                         <Scene key='root' tabs={true} hideNavBar>
-                            {/*<Scene key="MatchCreator" component={MatchCreator} title="Crea tu partido" user={this.state.user} />*/}
-                            <Scene key="Home" component={Home} title="Perfil" type={ActionConst.REPLACE}  hideNavBar icon={(focused) => icon({focused, type: 'contact'})}/>
-                            <Scene key="MatchList" component={MatchList} title="Buscar" user={this.state.user} initial={true} icon={(focused) => icon({focused, type: 'search'})}/>
+                            <Scene key="Explore" component={Explore} title="Explorar" user={this.state.user} icon={(focused) => icon({focused, type: 'podium'})}/>
+                            <Scene key="MovieList" component={MovieList} title="Buscar" user={this.state.user} icon={(focused) => icon({focused, type: 'search'})}/>
+                            <Scene key="Home" component={Home} title="Perfil" type={ActionConst.REPLACE} initial={true} icon={(focused) => icon({focused, type: 'contact'})} hideNavBar />                            
                         </Scene>
                         <Scene key="Detail" component={Detail} title="Detalle"  user={this.state.user} />
                     </Stack>
@@ -98,6 +100,6 @@ const styles = StyleSheet.create({
     },
     barButtonIconStyle:{
         tintColor:'#FFFFFF'
-    },
+    }
 
 });
