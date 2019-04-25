@@ -268,10 +268,10 @@ const styles = StyleSheet.create({
     cardContainer: {
         height: height * 0.32,
         width: width * 0.6,
-        borderRadius: 0,
-        borderWidth: 0,
-        borderColor: 'transparent',
-        backgroundColor: 'transparent',
+        borderRadius: 30,
+        borderWidth: 1,
+        borderColor: '#E50A13',
+        backgroundColor: 'rgba(30,33,35,0.5)',
     },
     listcontainer: {},
     title: {
