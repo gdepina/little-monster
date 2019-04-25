@@ -14,6 +14,7 @@ import axios from 'axios';
 import {API_URL} from "../../../config/constants";
 import {Card} from 'react-native-elements';
 import PosterCmp from '../components/Poster';
+import Spinner from 'react-native-loading-spinner-overlay';
 
 const {width, height} = Dimensions.get('window');
 
@@ -23,6 +24,7 @@ class Explore extends React.Component {
     constructor(){
         super();
         this.state = {
+            spinner: true,
             tendence: [],
             byYear: [],
             byGenre: [],
@@ -50,6 +52,7 @@ class Explore extends React.Component {
                 tendence,
                 byYear,
                 byGenre,
+                spinner:false,
             }, () => this.props.user && this.props.loadComments(this.props.user.uid))
         })
 
@@ -73,10 +76,9 @@ class Explore extends React.Component {
     }
 
     renderItem(item, index) {
-        return (<TouchableOpacity onPress={() => Actions.Detail({ id: item.imdbID})}><View key={index}>
+        return (<View key={index}>
             <PosterCmp style={{ width: width, height: height*0.3 }} image={item.Poster} title={item.Title}  contentPosition="center" height={height*0.3} />
-            </View></TouchableOpacity>
-        )
+            </View>)
     }
 
     render() {
@@ -116,6 +118,11 @@ class Explore extends React.Component {
                         </ScrollView>
                     </View>
                 </ScrollView>
+                <Spinner
+                    visible={this.state.spinner}
+                    textContent={'Estamos pensando...'}
+                    color='#E50A13'
+                    textStyle={{ color: '#fff' }} />
             </ImageBackground>
         );
     }

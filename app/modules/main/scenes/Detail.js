@@ -33,6 +33,7 @@ class MoviePoster extends Component {
         this.buildModal = this.buildModal.bind(this);
         this.addComment = this.addComment.bind(this);
         this.closeComment = this.closeComment.bind(this);
+        this.checkIfLiked = this.checkIfLiked.bind(this);
 
         this.state = {
             isModalVisible: false,
@@ -53,11 +54,17 @@ class MoviePoster extends Component {
         this.like(false);
     }
 
+    checkIfLiked() {
+        const {currentMovie, likes} = this.props;
+        const found = likes && likes.length && likes.find((element) => element === currentMovie.imdbID);
+        return !!found;
+    }
+
     like(isPositive) {
         const {imdbID, Title,} = this.props.currentMovie;
         const {uid, displayName} = this.props.user;
 
-        this.props.like({
+        !this.checkIfLiked() && this.props.like({
             omdbId: imdbID,
             isPositive,
             movieName: Title,
@@ -122,7 +129,7 @@ class MoviePoster extends Component {
             size={18}
             color={Colors.tabIconDefault}
         />)
-
+        const liked = !this.checkIfLiked() ? 0.2 : 0;
 
         return (<View style={styles.container}>
             <PosterCmp image={Poster} title={Title} description={description} contentPosition="bottom" overlayAlpha={0.5}
@@ -131,7 +138,7 @@ class MoviePoster extends Component {
                     <Text numberOfLines={4}
                           style={styles.shadowRuntime}>{calendarIcon}{` ${Year}  `}{clockIcon}{` ${Runtime}`}</Text>
                     <View style={styles.rate}>
-                        <TouchableOpacity onPress={this.onLike} style={{marginRight: 25}}>
+                        <TouchableOpacity onPress={this.onLike} style={{marginRight: 25}} activeOpacity={liked}>
                             <Foundation
                                 name={'like'}
                                 size={40}
@@ -139,7 +146,7 @@ class MoviePoster extends Component {
                             />
                             <Text style={styles.shadow}>{positiveCount}</Text>
                         </TouchableOpacity>
-                        <TouchableOpacity onPress={this.onDisLike}>
+                        <TouchableOpacity onPress={this.onDisLike} activeOpacity={liked}>
                             <Foundation
                                 name={'dislike'}
                                 size={40}
@@ -283,6 +290,7 @@ function mapStateToProps(state, props) {
     return {
         currentMovie: state.mainReducer.currentMovie,
         user: state.authReducer.user,
+        likes: state.mainReducer.likes,
     }
 }
 
