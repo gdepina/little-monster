@@ -72,8 +72,8 @@ export function like(opt) {
         })
         api.like(opt)
             .then((res) => {
-                console.log(res);
                 loadMovie(res.omdbId)(dispatch) //refresh the data to keep up-to-date
+                loadComments(opt.userId)(dispatch)
             })
             .catch(error => {
                 dispatch({

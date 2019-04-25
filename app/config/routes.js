@@ -13,6 +13,7 @@ import TabBarIcon from './TabBarIcon'
 import Welcome from '../modules/auth/scenes/Welcome';
 import Register from '../modules/auth/scenes/Register';
 import Login from '../modules/auth/scenes/Login';
+import ChangePw from '../modules/auth/scenes/ChangePw';
 
 import firebase from "../config/firebase"
 import { actions } from "../modules/auth"
@@ -78,10 +79,11 @@ class Routes extends React.Component {
                                      backgroundColor: '#282828'
 
                         }}>
-                            <Scene key="Explore" component={Explore} title="Tendencias" user={this.state.user} icon={(focused) => icon({focused, type: 'podium'})} hideNavBar />
+                            <Scene key="Explore" component={Explore} title="Tendencias"  initial={true} user={this.state.user} icon={(focused) => icon({focused, type: 'podium'})} hideNavBar />
                             <Scene key="MovieList" component={MovieList} title="Buscar" user={this.state.user} icon={(focused) => icon({focused, type: 'search'})} hideNavBar/>
-                            <Scene key="Home" component={Home} title="Perfil" type={ActionConst.REPLACE} initial={true} icon={(focused) => icon({focused, type: 'contact'})} hideNavBar />
+                            <Scene key="Home" component={Home} title="Perfil" type={ActionConst.REPLACE} icon={(focused) => icon({focused, type: 'contact'})} hideNavBar />
                         </Scene>
+                        <Scene key="ChangePass" component={ChangePw} title="Cambiar contraseña"/>
                         <Scene key="Detail" component={Detail} title="Detalle"  user={this.state.user} />
                     </Stack>
                 </Scene>

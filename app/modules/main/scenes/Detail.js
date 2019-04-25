@@ -88,7 +88,7 @@ class MoviePoster extends Component {
         return (
             <ScrollView horizontal={true} contentContainerStyle={styles.listcontainer}>
                 {
-                    comments && comments.map((l, i) => (
+                    comments && comments.reverse().map((l, i) => (
                         <Card containerStyle={styles.cardContainer}>
                             <Text style={{
                                 fontStyle: 'italic', fontWeight: 'bold', fontSize: 16, color: '#ccc',

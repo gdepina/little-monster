@@ -25,7 +25,7 @@ class Home extends React.Component {
 
     componentWillReceiveProps(nextProps) {
         if(!isEqual(nextProps.user, this.props.user)) {
-            this.props.loadComments(nextProps.user.uid)
+            nextProps.user && this.props.loadComments(nextProps.user.uid)
         }
     }
 
@@ -86,8 +86,8 @@ class Home extends React.Component {
                             button={MoreIcon}
                             buttonStyle={{ width: 40, height: 20, margin: 7.5, resizeMode: "contain" }}
                             destructiveIndex={1}
-                            options={["Cerrar Sesión"]}
-                            actions={[this.onSignOut.bind(this)]} />
+                            options={["Cambiar contraseña", "Cerrar Sesión"]}
+                            actions={[Actions.ChangePass ,this.onSignOut.bind(this)]} />
                     </View>
                     <ScrollView style={styles.container}>
                         {this.loadReview()}

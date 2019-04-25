@@ -23,6 +23,11 @@ export function login(data, successCB, errorCB) {
     };
 }
 
+
+export function changePw(data, successCB, errorCB) {
+        api.changePassword(data, successCB, errorCB);
+}
+
 export function storeUser(data) {
     return (dispatch) => {
         dispatch({type: t.LOGIN_SUCCESS, user: data});

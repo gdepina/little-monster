@@ -8,7 +8,7 @@ import Colors from '../../../config/Colors';
 import { actions as auth } from "../../auth"
 var { signOut } = auth;
 import {actions, reducer as mainReducer} from ".."
-const { loadMovies } = actions;
+const { loadMovies, loadComments } = actions;
 import * as api from '../api';
 import axios from 'axios';
 import {API_URL} from "../../../config/constants";
@@ -50,7 +50,7 @@ class Explore extends React.Component {
                 tendence,
                 byYear,
                 byGenre,
-            })
+            }, () => this.props.user && this.props.loadComments(this.props.user.uid))
         })
 
     }
@@ -128,7 +128,7 @@ function mapStateToProps(state, props) {
     }
 }
 
-export default connect(mapStateToProps, { signOut, loadMovies })(Explore);
+export default connect(mapStateToProps, { signOut, loadMovies, loadComments })(Explore);
 
 
 const styles = StyleSheet.create({
