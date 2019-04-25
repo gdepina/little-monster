@@ -26,7 +26,7 @@ class Home extends React.Component {
     componentDidMount() {
         const {loadMovies , user, loadComments} = this.props;
         loadMovies();
-        user && loadComments('123asd')
+        user && loadComments(user.uid)
     }
 
     onSignOut() {
@@ -50,7 +50,7 @@ class Home extends React.Component {
     loadReview() {
         const { comments } = this.props;
         return comments.map((item, index) => (
-            <TouchableOpacity onPress={() => Actions.Detail({id:'tt0371746'})}>
+            <TouchableOpacity onPress={() => Actions.Detail({id:item.movieId})}>
                 <Card key={index} title={item.name}>
                     {
                         <View>
