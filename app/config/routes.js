@@ -72,7 +72,12 @@ class Routes extends React.Component {
 
 
                     <Stack key="Main" initial={this.state.isLoggedIn}>
-                        <Scene key='root' tabs={true} hideNavBar>
+                        <Scene key='root' tabs={true} hideNavBar
+                               activeTintColor={'white'}
+                               tabBarStyle={{
+                                     backgroundColor: '#282828'
+
+                        }}>
                             <Scene key="Explore" component={Explore} title="Explorar" user={this.state.user} icon={(focused) => icon({focused, type: 'podium'})}/>
                             <Scene key="MovieList" component={MovieList} title="Buscar" user={this.state.user} icon={(focused) => icon({focused, type: 'search'})} hideNavBar/>
                             <Scene key="Home" component={Home} title="Perfil" type={ActionConst.REPLACE} initial={true} icon={(focused) => icon({focused, type: 'contact'})} hideNavBar />
@@ -90,7 +95,7 @@ export default connect(null, {storeUser})(Routes);
 
 const styles = StyleSheet.create({
     navBar: {
-        backgroundColor:'#397af8',
+        backgroundColor:'#141414',
     },
     navBarTitle:{
         color:'#FFFFFF'

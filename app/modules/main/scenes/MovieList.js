@@ -115,7 +115,7 @@ class MovieList extends React.Component {
                             // ListFooterComponent={this.renderFooter}
                             renderItem={({item}) => (
                                 <TouchableOpacity onPress={() => this.onPressRow(item.imdbID)}>
-                                    <PosterCmp image={item.Poster} title={item.Title} description={`${item.Year} | ${item.Type}`} contentPosition="center" height={height*0.3}>
+                                    <PosterCmp image={item.Poster} title={item.Title} description={`${item.Year} | ${item.Type}`} contentPosition="center" height={height*0.3} overlayAlpha={0.3}>
                                     </PosterCmp>
                                 </TouchableOpacity>
                             )}

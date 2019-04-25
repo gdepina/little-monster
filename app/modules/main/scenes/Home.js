@@ -13,7 +13,6 @@ const { loadMovies } = actions;
 
 const {width, height} = Dimensions.get('window');
 const MoreIcon = require('./assets/more.png');
-const bkgColor = '#397AF8';
 
 class Home extends React.Component {
     constructor(){
@@ -95,7 +94,7 @@ const styles = StyleSheet.create({
         fontWeight:"500"
     },
     topBar:{
-        backgroundColor: bkgColor,
+        backgroundColor: '#141414',
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems:"center",
@@ -106,7 +105,7 @@ const styles = StyleSheet.create({
         fontSize:20,
         fontWeight: 'bold',
         color: '#ffffff',
-        marginLeft: 15        
+        marginLeft: 15
     }
 });
 
