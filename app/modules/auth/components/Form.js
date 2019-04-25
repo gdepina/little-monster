@@ -85,7 +85,7 @@ export default class Form extends React.Component {
                     raised
                     title={'CONTINUAR'}
                     borderRadius={4}  //optional
-                    backgroundColor={"#397af8"} //optional
+                    backgroundColor={"#e50a13"} //optional
                     containerViewStyle={styles.buttonContainer} //optional
                     buttonStyle={styles.button} //optional
                     textStyle={{}}//optional
