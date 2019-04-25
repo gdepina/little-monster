@@ -4,11 +4,11 @@ import {Dimensions, StyleSheet, Text, View} from "react-native";
 
 class Poster extends Component {
     render() {
-        const {image, title, description, children, contentPosition, height} = this.props;
+        const {image, title, description, children, contentPosition, height, overlayAlpha, blurRadius} = this.props;
         return (
             <ImageOverlay
                 source={{uri: image}}
-                contentPosition={contentPosition} overlayAlpha={0.3} height={height} >
+                contentPosition={contentPosition} overlayAlpha={overlayAlpha} height={height} blurRadius={blurRadius} >
                 <View style={ contentPosition === 'center' ? styles.containerCenter : styles.contentContainer}>
                     <View style={styles.titleContainer}><Text style={styles.title}>{title}</Text></View>
                     <View style={styles.descContainer}><Text numberOfLines = { 4 }
@@ -22,7 +22,7 @@ class Poster extends Component {
 }
 
 const styles = StyleSheet.create({
-    description: {fontSize: 20, fontWeight: 'bold'},
+    description: {fontSize: 23, fontWeight: 'bold'},
     contentContainer: {
         flex: 1,
         justifyContent: 'flex-end',
@@ -38,7 +38,7 @@ const styles = StyleSheet.create({
         marginBottom: 20,
     },
     title: {
-        fontSize: 20,
+        fontSize: 26,
         fontWeight: 'bold',
         color: '#fff',
         textShadowOffset: { width: 2, height: 2 },
