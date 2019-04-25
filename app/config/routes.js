@@ -78,7 +78,7 @@ class Routes extends React.Component {
                                      backgroundColor: '#282828'
 
                         }}>
-                            <Scene key="Explore" component={Explore} title="Explorar" user={this.state.user} icon={(focused) => icon({focused, type: 'podium'})}/>
+                            <Scene key="Explore" component={Explore} title="Tendencias" user={this.state.user} icon={(focused) => icon({focused, type: 'podium'})} hideNavBar />
                             <Scene key="MovieList" component={MovieList} title="Buscar" user={this.state.user} icon={(focused) => icon({focused, type: 'search'})} hideNavBar/>
                             <Scene key="Home" component={Home} title="Perfil" type={ActionConst.REPLACE} initial={true} icon={(focused) => icon({focused, type: 'contact'})} hideNavBar />
                         </Scene>

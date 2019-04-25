@@ -6,6 +6,7 @@
     "version": "0.1.0",
     "description": "little-monster project",
     "githubUrl": "https://github.com/gdepina/little-monster",
+    "orientation":"portrait",
     "platforms": [
       "android",
       "ios"

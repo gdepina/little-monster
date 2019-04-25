@@ -1,5 +1,5 @@
 import React from 'react';
-const { View, StyleSheet, Alert, ImageBackground, Text, Dimensions, Image } = require('react-native');
+const { View, StyleSheet, Alert, ImageBackground, Text, Dimensions, Image, ScrollView } = require('react-native');
 
 import {Actions} from 'react-native-router-flux';
 import {connect} from 'react-redux';
@@ -9,6 +9,11 @@ import { actions as auth } from "../../auth"
 var { signOut } = auth;
 import {actions, reducer as mainReducer} from ".."
 const { loadMovies } = actions;
+import * as api from '../api';
+import axios from 'axios';
+import {API_URL} from "../../../config/constants";
+import {Card} from 'react-native-elements';
+import PosterCmp from '../components/Poster';
 
 const {width, height} = Dimensions.get('window');
 
@@ -17,12 +22,43 @@ const bkgColor = Colors.tintColor;
 class Explore extends React.Component {
     constructor(){
         super();
-        this.state = { }
+        this.state = {
+            tendence: [],
+            byYear: [],
+            byGenre: [],
+
+        }
     }
 
     componentDidMount() {
-        this.props.loadMovies();
+        let url = `${API_URL}/movies`;
+        let tendence = [];
+        let byYear = [];
+        let byGenre = [];
+
+        //this.props.loadMovies();
+        Promise.all([axios.get(`${url}?s=final`), axios.get(`${url}?s=geek`), axios.get(`${url}?s=game`)]).then(data => {
+            tendence = data[0].data;
+            data[2].data.forEach(movie => {
+                byYear.push(this.buildMovieCard(movie.Poster))
+            })
+            data[1].data.forEach(movie => {
+                byGenre.push(this.buildMovieCard(movie.Poster))
+            })
+        }).then(() => {
+            this.setState({
+                tendence,
+                byYear,
+                byGenre,
+            })
+        })
+
     }
+
+    buildMovieCard(img) {
+        return <Card containerStyle={styles.cardContainer}  image={{uri: img}} />
+    }
+
 
     onSignOut() {
         this.props.signOut(this.onSuccess.bind(this), this.onError.bind(this))
@@ -36,10 +72,11 @@ class Explore extends React.Component {
         Alert.alert('Oops!', error.message);
     }
 
-    renderItem(img, index) {
+    renderItem(item, index) {
         return (<View key={index}>
-            <Image style={{ width: width, height: height*0.3 }} source={{ uri: img }} />
-        </View>)
+            <PosterCmp style={{ width: width, height: height*0.3 }} image={item.Poster} title={item.Title}  contentPosition="center" height={height*0.3} />
+            </View>
+        )
     }
 
     render() {
@@ -53,9 +90,10 @@ class Explore extends React.Component {
                     height: '100%',
                     justifyContent: 'center',
                 }}
-                source={require('./background.png')}
+                source={require('./background.jpg')}
             >
-                <View style={styles.container}>
+                <ScrollView style={styles.container}>
+                    <Text style={styles.titleFirst}>{"Tendencias"}</Text>
                     <Carousel
                         autoplay
                         autoplayTimeout={5000}
@@ -63,18 +101,21 @@ class Explore extends React.Component {
                         index={0}
                         pageSize={width}
                     >
-                        {this.props.movies && this.props.movies.map((item, index) => this.renderItem(item.Poster, index))}
+                        {this.state.tendence && this.state.tendence.map((item, index) => this.renderItem(item, index))}
                     </Carousel>
-                    <Carousel
-                        autoplay
-                        autoplayTimeout={5000}
-                        loop
-                        index={0}
-                        pageSize={width}
-                    >
-                        {this.props.movies && this.props.movies.map((item, index) => this.renderItem(item.Poster, index))}
-                    </Carousel>
-                </View>
+                    <Text style={styles.title}>{"Lo más visto"}</Text>
+                    <View >
+                        <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
+                            {this.state.byYear && this.state.byYear}
+                        </ScrollView>
+                    </View>
+                    <Text style={styles.title}>{"Comedia"}</Text>
+                    <View >
+                        <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
+                            {this.state.byGenre && this.state.byGenre}
+                        </ScrollView>
+                    </View>
+                </ScrollView>
             </ImageBackground>
         );
     }
@@ -98,21 +139,53 @@ const styles = StyleSheet.create({
     buttonContainer:{
         marginVertical:0, marginHorizontal:0
     },
-
+    cardContainer: {
+        height: height*0.257,
+        width: width*0.3,
+    },
+    // cardContainerCircle: {
+    //     height: height*0.252,
+    //     width: width*0.3,
+    //     borderWidth: 0,
+    // },
     buttonText:{
         fontWeight:"500"
     },
-    topBar:{
-        backgroundColor:bkgColor,
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems:"flex-end"
-      },
-    title:{
-        fontSize:20,
+    title: {
+        fontSize: 16,
         fontWeight: 'bold',
-        color: '#ffffff'
+        color: '#fff',
+        textShadowOffset: {width: 2, height: 2},
+        textShadowRadius: 1,
+        textShadowColor: '#000',
+        paddingLeft: 15,
+        paddingTop: 5,
+        paddingBottom: 5,
+        marginTop: 10,
+    },
+    titleFirst: {
+        fontSize: 16,
+        fontWeight: 'bold',
+        color: '#fff',
+        textShadowOffset: {width: 2, height: 2},
+        textShadowRadius: 1,
+        textShadowColor: '#000',
+        padding: 15,
+        marginTop: 25,
+    },
+    titleItemCarousel: {
+        fontSize: 16,
+        fontWeight: 'bold',
+        color: '#fff',
+        textShadowOffset: {width: 2, height: 2},
+        textShadowRadius: 1,
+        textShadowColor: '#000',
+        paddingLeft: 15,
+        paddingTop: 5,
+        paddingBottom: 5,
+        marginTop: 10,
     }
+
 });
 
 
