@@ -1,5 +1,5 @@
 import React from 'react';
-const { View, StyleSheet, Alert, ImageBackground, Text, Dimensions, Image, ScrollView } = require('react-native');
+const { View, StyleSheet, Alert, ImageBackground, Text, Dimensions, Image, ScrollView, TouchableOpacity} = require('react-native');
 
 import {Actions} from 'react-native-router-flux';
 import {connect} from 'react-redux';
@@ -40,10 +40,10 @@ class Explore extends React.Component {
         Promise.all([axios.get(`${url}?s=final`), axios.get(`${url}?s=geek`), axios.get(`${url}?s=game`)]).then(data => {
             tendence = data[0].data;
             data[2].data.forEach(movie => {
-                byYear.push(this.buildMovieCard(movie.Poster))
+                byYear.push(this.buildMovieCard(movie))
             })
             data[1].data.forEach(movie => {
-                byGenre.push(this.buildMovieCard(movie.Poster))
+                byGenre.push(this.buildMovieCard(movie))
             })
         }).then(() => {
             this.setState({
@@ -55,8 +55,8 @@ class Explore extends React.Component {
 
     }
 
-    buildMovieCard(img) {
-        return <Card containerStyle={styles.cardContainer}  image={{uri: img}} />
+    buildMovieCard(movie) {
+        return (<TouchableOpacity onPress={() => Actions.Detail({ id: movie.imdbID})}><Card containerStyle={styles.cardContainer}  image={{uri: movie.Poster}} /></TouchableOpacity>)
     }
 
 
@@ -73,9 +73,9 @@ class Explore extends React.Component {
     }
 
     renderItem(item, index) {
-        return (<View key={index}>
+        return (<TouchableOpacity onPress={() => Actions.Detail({ id: item.imdbID})}><View key={index}>
             <PosterCmp style={{ width: width, height: height*0.3 }} image={item.Poster} title={item.Title}  contentPosition="center" height={height*0.3} />
-            </View>
+            </View></TouchableOpacity>
         )
     }
 

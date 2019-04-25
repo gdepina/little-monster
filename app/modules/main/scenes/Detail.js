@@ -69,22 +69,6 @@ class MoviePoster extends Component {
 
     buildComments() {
         const {comments} = this.props.currentMovie;
-        {/*<ListItem*/
-        }
-        {/*hideChevron*/
-        }
-        {/*key={i}*/
-        }
-        {/*title={l.comment.comment}*/
-        }
-        {/*subtitle={l.comment.userName}*/
-        }
-        {/*titleStyle={{ fontStyle: 'italic' }}*/
-        }
-        {/*subtitleStyle={{ textAlign: 'right' }}*/
-        }
-        {/*/>*/
-        }
         return (
             <ScrollView horizontal={true} contentContainerStyle={styles.listcontainer}>
                 {
@@ -121,7 +105,7 @@ class MoviePoster extends Component {
     }
 
     closeComment() {
-        this.setState({isModalVisible: false});
+        this.setState({isModalVisible: false, text: null});
     }
 
 
@@ -253,8 +237,8 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
     },
     textInput: {
-        borderBottomColor: '#9E9E9E',
-        borderBottomWidth: 2,
+        // borderBottomColor: '#9E9E9E',
+        // borderBottomWidth: 2,
         marginBottom: 30,
         height: height * 0.2
     },

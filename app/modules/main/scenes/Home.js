@@ -51,12 +51,12 @@ class Home extends React.Component {
         const { comments } = this.props;
         return comments.map((item, index) => (
             <TouchableOpacity onPress={() => Actions.Detail({id:item.movieId})}>
-                <Card key={index} title={item.name}>
+                <Card key={index} title={item.name} containerStyle={{ backgroundColor: '#2B2F32', borderRadius: 10 }} dividerStyle={{ backgroundColor:'#E50A13' }} titleStyle={{ color:'#fff' }}>
                     {
                         <View>
                             {
                                 item.comments.map(cmt => (
-                                    <Text>{cmt.comment.comment}</Text>
+                                    <Text style={{ fontStyle: 'italic', color: '#fff' }}>"{cmt.comment.comment}"</Text>
                                 ))
                             }
                         </View>
