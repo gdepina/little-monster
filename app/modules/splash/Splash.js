@@ -16,7 +16,7 @@ export default class extends React.Component {
             <View style={styles.container}>
                 <ActivityIndicator
                     animating = {this.state.animating}
-                    color = '#bc2b78'
+                    color = '#E50A13'
                     size = "large"
                     style = {styles.activityIndicator}/>
             </View>

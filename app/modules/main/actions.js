@@ -74,6 +74,10 @@ export function like(opt) {
             .then((res) => {
                 loadMovie(res.omdbId)(dispatch) //refresh the data to keep up-to-date
                 loadComments(opt.userId)(dispatch)
+                dispatch({
+                    type: actionType.LOAD_LIKE_MOVIE,
+                    payload: res.omdbId
+                })
             })
             .catch(error => {
                 dispatch({
