@@ -20,13 +20,11 @@ export default class Welcome extends React.Component {
                     height: '100%',
                     justifyContent: 'center',
                 }}
-                source={require('./photo.jpg')}
+                source={require('./popcorn.jpg')}
             >
                 <View style={styles.container}>
                     <View style={styles.wrapper}>
-                        <View style={styles.logo}>
-                            <Text h1 style={styles.shadow}>Little Monster</Text>
-                        </View>
+                        <Text h1 style={styles.shadow}>Little Monster</Text>
                         <View>
                             <LottieView
                                 source={movie}
@@ -41,20 +39,20 @@ export default class Welcome extends React.Component {
                             raised
                             title={'INGRESA'}
                             borderRadius={4}
-                            backgroundColor={"#e50a13"} //optional
-                            containerViewStyle={[styles.buttonContainer, { marginVertical: 4 }]}
+                            backgroundColor={color.main}
+                            containerViewStyle={[styles.buttonContainer, {marginVertical:4}]}
                             buttonStyle={{}} //optional
                             textStyle={styles.buttonText}
-                            onPress={Actions.Login} />
+                            onPress={Actions.Login}/>
                         <Button
                             raised
                             title={'CREAR CUENTA'}
                             borderRadius={4}
-                            backgroundColor={"#e50a13"} //optional
+                            backgroundColor={color.main}
                             containerViewStyle={styles.buttonContainer}
                             buttonStyle={{}} //optional
                             textStyle={styles.buttonText}
-                            onPress={Actions.Register} />
+                            onPress={Actions.Register}/>
                     </View>
                 </View>
             </ImageBackground>
@@ -68,9 +66,7 @@ const styles = StyleSheet.create({
     },
 
     wrapper:{
-        flex:1, justifyContent:"flex-start", alignItems:"center",
-        flexDirection: 'column',
-        marginTop: 60,
+        flex:1, justifyContent:"center", alignItems:"center"
     },
     movie: {
         width: 500,
@@ -89,12 +85,9 @@ const styles = StyleSheet.create({
         fontWeight:"500"
     },
     shadow: {
-        color: '#ffffff',
-        textShadowOffset: { width: 2.5, height: 2 },
+        color: '#fff',
+        textShadowOffset: { width: 2, height: 2 },
         textShadowRadius: 1,
-        textShadowColor: '#e5e0e0',
-    },
-    logo: {
-        //backgroundColor: '#4c4646'
+        textShadowColor: '#000',
     }
 });
