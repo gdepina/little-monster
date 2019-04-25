@@ -176,7 +176,7 @@ class MoviePoster extends Component {
 
     render() {
         return (
-            <ScrollView style={styles.container}>
+            <ScrollView style={styles.scrollViewContainer}>
                 {this.props.currentMovie && this.buildPoster()}
                 {this.buildModal()}
             </ScrollView>
@@ -228,6 +228,9 @@ class MoviePoster extends Component {
 const styles = StyleSheet.create({
     container: {
         backgroundColor: '#fff',
+    },
+    scrollViewContainer: {
+        flex:1
     },
     buttonModalContainer: {
         width: width * 0.9,

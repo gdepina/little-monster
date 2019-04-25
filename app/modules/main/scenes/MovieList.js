@@ -71,7 +71,7 @@ class MovieList extends React.Component {
     renderHeader() {
         const debounced = debounce((text) => this.filterByValue(text), 300);
         ;
-        return <SearchBar round onChangeText={(text) => debounced(text)} value={this.state.value}
+        return <SearchBar noIcon round onChangeText={(text) => debounced(text)} value={this.state.value}
                           onClearText={null} placeholder='Busca tu serie o peli favorita'/>;
     }
 

@@ -147,7 +147,8 @@ const styles = StyleSheet.create({
         marginVertical:0, marginHorizontal:0
     },
     cardContainer: {
-        height: height*0.257,
+        // height: height*0.257,
+        height: height >= 700 ? height*0.19 : height*0.257,
         width: width*0.3,
     },
     // cardContainerCircle: {
