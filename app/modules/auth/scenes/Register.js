@@ -24,7 +24,7 @@ const fields = [
     {
         key:'email',
         label: "EMAIL",
-        placeholder:"correo electronico",
+        placeholder:"goru@futbol.com",
         autoFocus:false,
         secureTextEntry:false,
         value: "",
@@ -33,7 +33,7 @@ const fields = [
     {
         key:'password',
         label: "CONTRASEÑA",
-        placeholder:"min 6 caracteres",
+        placeholder:"Min 6 caracteres",
         autoFocus:false,
         secureTextEntry:true,
         value: "",
@@ -84,7 +84,7 @@ export default connect(null, { register })(Register);
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#2B2F32',
+        backgroundColor: '#fff',
     }
 });
 
