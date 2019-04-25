@@ -10,7 +10,8 @@ import { actions as auth } from "../../auth"
 var { signOut } = auth;
 import { actions, reducer as mainReducer } from "../"
 import { Card, ListItem, Button, Icon } from 'react-native-elements'
-const { loadMovies, loadComments } = actions;
+import isEqual from 'lodash.isequal';
+const { loadComments } = actions;
 
 const { width, height } = Dimensions.get('window');
 const MoreIcon = require('./assets/more.png');
@@ -22,10 +23,10 @@ class Home extends React.Component {
         this.loadReview = this.loadReview.bind(this);
     }
 
-    componentDidMount() {
-        const {loadMovies , user, loadComments} = this.props;
-        loadMovies();
-        user && loadComments(user.uid)
+    componentWillReceiveProps(nextProps) {
+        if(!isEqual(nextProps.user, this.props.user)) {
+            this.props.loadComments(nextProps.user.uid)
+        }
     }
 
     onSignOut() {
@@ -76,7 +77,7 @@ class Home extends React.Component {
                     height: '100%',
                     justifyContent: 'center',
                 }}
-                source={require('./background.png')}
+                source={require('./background.jpg')}
             >
                 <View style={styles.container}>
                     <View style={styles.topBar}>
@@ -101,12 +102,11 @@ class Home extends React.Component {
 function mapStateToProps(state, props) {
     return {
         user: state.authReducer.user,
-        movies: state.mainReducer.movies,
         comments: state.mainReducer.comments
     }
 }
 
-export default connect(mapStateToProps, { signOut, loadMovies, loadComments })(Home);
+export default connect(mapStateToProps, { signOut, loadComments })(Home);
 
 
 const styles = StyleSheet.create({
