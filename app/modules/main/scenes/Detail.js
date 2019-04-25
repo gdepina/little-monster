@@ -64,7 +64,7 @@ class MoviePoster extends Component {
         const {imdbID, Title,} = this.props.currentMovie;
         const {uid, displayName} = this.props.user;
 
-        !this.checkIfLiked() && this.props.like({
+        (!this.checkIfLiked() || isPositive === null) && this.props.like({
             omdbId: imdbID,
             isPositive,
             movieName: Title,
