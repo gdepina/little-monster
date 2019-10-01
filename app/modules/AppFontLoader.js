@@ -4,10 +4,10 @@ import React from 'react';
 import {AppLoading, Font} from 'expo';
 
 
-import FontAwesome from '../../node_modules/@expo/vector-icons/fonts/FontAwesome.ttf';
+import FontAwesome from '../../node_modules/@expo/vector-icons/FontAwesome';
 
 
-import MaterialIcons from '../../node_modules/@expo/vector-icons/fonts/MaterialIcons.ttf';
+import MaterialIcons from '../../node_modules/@expo/vector-icons/MaterialIcons';
 
 
 class AppFontLoader extends React.Component {
@@ -25,31 +25,31 @@ class AppFontLoader extends React.Component {
     async componentWillMount() {
 
 
-        try {
-
-
-            await Font.loadAsync({
-
-
-                FontAwesome,
-
-
-                MaterialIcons
-
-
-            });
-
-
-            this.setState({fontLoaded: true});
-
-
-        } catch (error) {
-
-
-            console.log('error loading icon fonts', error);
-
-
-        }
+        // try {
+        //
+        //
+        //     await Font.loadAsync({
+        //
+        //
+        //         FontAwesome,
+        //
+        //
+        //         MaterialIcons
+        //
+        //
+        //     });
+        //
+        //
+        //     this.setState({fontLoaded: true});
+        //
+        //
+        // } catch (error) {
+        //
+        //
+        //     console.log('error loading icon fonts', error);
+        //
+        //
+        // }
 
 
     }
