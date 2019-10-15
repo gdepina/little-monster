@@ -7,7 +7,7 @@ import Home from '../modules/main/scenes/Home';
 //import MatchCreator from '../modules/main/scenes/MatchCreator';
 import Detail from '../modules/main/scenes/Detail';
 import MovieList from '../modules/main/scenes/MovieList';
-import Explore from '../modules/main/scenes/Explore';
+import InvestCreator from '../modules/main/scenes/InvestCreator';
 import TabBarIcon from './TabBarIcon'
 
 import Welcome from '../modules/auth/scenes/Welcome';
@@ -67,19 +67,22 @@ class Routes extends React.Component {
                 <Scene key="root" hideNavBar>
                     <Stack key="Auth" initial={!this.state.isLoggedIn}>
                         <Scene key="Welcome" component={Welcome} title="Todas las pelis en un solo lugar" initial={true} hideNavBar/>
-                        <Scene key="Register" component={Register} title="Register"/>
-                        <Scene key="Login" component={Login} title="Login"/>
+                        <Scene key="Register" component={Register} title="Crea tu cuenta"/>
+                        <Scene key="Login" component={Login} title="Ingreso"/>
                     </Stack>
 
+                    {/*<Stack key="Onboarding" initial={this.state.user.metadata.creationTime === this.state.user.metadata.lastSignInTime}>*/}
+                        {/*<Scene key="Welcome" component={Welcome} title="Todas las pelis en un solo lugar" initial={true} hideNavBar/>*/}
+                    {/*</Stack>*/}
 
                     <Stack key="Main" initial={this.state.isLoggedIn}>
-                        <Scene key='root' tabs={true} hideNavBar
+                        <Scene key='root' tabs={false} hideNavBar
                                activeTintColor={'white'}
                                tabBarStyle={{
                                      backgroundColor: '#282828'
 
                         }}>
-                            <Scene key="Explore" component={Explore} title="Tendencias"  initial={true} user={this.state.user} icon={(focused) => icon({focused, type: 'podium'})} hideNavBar />
+                            <Scene key="Explore" component={InvestCreator} title="Tendencias"  initial={true} user={this.state.user} icon={(focused) => icon({focused, type: 'podium'})} hideNavBar />
                             <Scene key="MovieList" component={MovieList} title="Buscar" user={this.state.user} icon={(focused) => icon({focused, type: 'search'})} hideNavBar/>
                             <Scene key="Home" component={Home} title="Perfil" type={ActionConst.REPLACE} icon={(focused) => icon({focused, type: 'contact'})} hideNavBar />
                         </Scene>
@@ -97,7 +100,7 @@ export default connect(null, {storeUser})(Routes);
 
 const styles = StyleSheet.create({
     navBar: {
-        backgroundColor:'#141414',
+        backgroundColor:'#20b382',
     },
     navBarTitle:{
         color:'#FFFFFF'

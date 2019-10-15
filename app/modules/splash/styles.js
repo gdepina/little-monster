@@ -5,7 +5,7 @@ const styles = StyleSheet.create({
         flex: 1,
         alignItems: 'center',
         justifyContent: 'center',
-        backgroundColor: "black",
+        backgroundColor: "#fff",
     },
     activityIndicator: {
         flex: 1,

@@ -1,7 +1,10 @@
 import React from 'react';
 var { View, ActivityIndicator } = require('react-native');
+const money = require('./assets/moneyfit.json');
 
 import styles from './styles'
+import LottieView from "lottie-react-native";
+
 
 export default class extends React.Component {
     constructor(){
@@ -14,11 +17,17 @@ export default class extends React.Component {
     render() {
         return (
             <View style={styles.container}>
-                <ActivityIndicator
-                    animating = {this.state.animating}
-                    color = '#E50A13'
-                    size = "large"
-                    style = {styles.activityIndicator}/>
+                <LottieView
+                    source={money}
+                    style={styles.movie}
+                    loop
+                    autoPlay
+                />
+                {/*<ActivityIndicator*/}
+                    {/*animating = {this.state.animating}*/}
+                    {/*color = '#20b382'*/}
+                    {/*size = "large"*/}
+                    {/*style = {styles.activityIndicator}/>*/}
             </View>
         );
     }

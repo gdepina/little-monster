@@ -16,7 +16,7 @@ export default class AuthTextInput extends Component {
                     <FormInput
                         autoCapitalize='none'
                         clearButtonMode='while-editing'
-                        underlineColorAndroid={"#fff"}
+                        underlineColorAndroid={"#ccc"}
                         placeholder={this.props.placeholder}
                         autoFocus={this.props.autoFocus}
                         onChangeText={this.props.onChangeText}

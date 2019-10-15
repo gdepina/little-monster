@@ -73,7 +73,7 @@ export default connect(null, { login })(Login);
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#2B2F32',
+        backgroundColor: 'white',
     }
 });
 

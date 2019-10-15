@@ -13,7 +13,7 @@ export default class Welcome extends React.Component {
         return (
             <ImageBackground
                 style={{
-                    backgroundColor: '#ccc',
+                    backgroundColor: '#fff',
                     flex: 1,
                     position: 'absolute',
                     width: '100%',
@@ -25,7 +25,7 @@ export default class Welcome extends React.Component {
                 <View style={styles.container}>
                     <View style={styles.wrapper}>
                         <View style={styles.logo}>
-                            <Text h1 style={styles.shadow}>Little Monster</Text>
+                            <Text h1 style={styles.shadow}>Money Fit</Text>
                         </View>
                         <View>
                             <LottieView
@@ -39,9 +39,9 @@ export default class Welcome extends React.Component {
                     <View style={styles.bottomContainer}>
                         <Button
                             raised
-                            title={'INGRESA'}
+                            title={'INGRESAR'}
                             borderRadius={4}
-                            backgroundColor={"#e50a13"} //optional
+                            backgroundColor={"#20b382"} //optional
                             containerViewStyle={[styles.buttonContainer, { marginVertical: 4 }]}
                             buttonStyle={{}} //optional
                             textStyle={styles.buttonText}
@@ -50,7 +50,7 @@ export default class Welcome extends React.Component {
                             raised
                             title={'CREAR CUENTA'}
                             borderRadius={4}
-                            backgroundColor={"#e50a13"} //optional
+                            backgroundColor={"#20b382"} //optional
                             containerViewStyle={styles.buttonContainer}
                             buttonStyle={{}} //optional
                             textStyle={styles.buttonText}
@@ -75,6 +75,7 @@ const styles = StyleSheet.create({
     movie: {
         width: 500,
         height: 280,
+        top: 50,
     },
 
     bottomContainer:{
@@ -89,12 +90,12 @@ const styles = StyleSheet.create({
         fontWeight:"500"
     },
     shadow: {
-        color: '#ffffff',
+        color: '#20b382',
         textShadowOffset: { width: 2.5, height: 2 },
         textShadowRadius: 1,
         textShadowColor: '#e5e0e0',
     },
     logo: {
-        //backgroundColor: '#4c4646'
+
     }
 });

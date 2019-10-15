@@ -84,7 +84,7 @@ export default connect(null, { register })(Register);
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#2B2F32',
+        backgroundColor: 'white',
     }
 });
 
