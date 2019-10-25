@@ -24,7 +24,7 @@ import {misc} from "../../../styles/Theme"
 import Colors from "../../../config/Colors";
 
 const device_width = misc.window_width;
-const {createMatch} = actions;
+const {getPlan} = actions;
 
 
 const profileRisksList = [
@@ -38,7 +38,7 @@ const profileRisksList = [
             size={40}
         />),
         subtitle: 'Riesgo ~15%',
-        key: 'low'
+        key: 'LOW'
     },
     {
         name: 'Moderado',
@@ -50,7 +50,7 @@ const profileRisksList = [
             size={40}
         />),
         subtitle: 'Riesgo ~30%',
-        key: 'moderated'
+        key: 'MODERATED'
     },
     {
         name: 'Agresivo',
@@ -62,7 +62,7 @@ const profileRisksList = [
             size={40}
         />),
         subtitle: 'Riesgo ~45%',
-        key: 'high'
+        key: 'HIGH'
     },
 ]
 
@@ -79,6 +79,7 @@ class MatchCreator extends React.Component {
             goal: '',
             desc: '',
             profitSave: '',
+            risk: '',
             preferSay: true,
         }
     }
@@ -96,6 +97,15 @@ class MatchCreator extends React.Component {
     }
 
 
+    dateDiffInDays(a, b) {
+        const _MS_PER_DAY = 1000 * 60 * 60 * 24;
+        // Discard the time and time-zone information.
+        const utc1 = Date.UTC(a.getFullYear(), a.getMonth(), a.getDate());
+        const utc2 = Date.UTC(b.getFullYear(), b.getMonth(), b.getDate());
+
+        return Math.floor((utc2 - utc1) / _MS_PER_DAY);
+    }
+
     onPressIndicator(position) {
         if (this.state.currentPosition > position && this.state.currentPosition !== 5) {
             this.setState({
@@ -109,21 +119,31 @@ class MatchCreator extends React.Component {
             currentPosition: step,
         }, () => {
             this.animation && this.animation.play();
-            // this.props.createMatch(this.props.user && `Partido de ${this.props.user.displayName || this.props.user.email}`,
-            //     this.props.user.uid,
-            //     this.state.matchSize,
-            //     this.state.courtType,
-            //     this.state.end_location,
-            //     this.state.datetime,
-            //     this.state.locationName,
-            //     [{
-            //         id:  this.props.user.uid,
-            //         owner: true,
-            //         email: this.props.user.email,
-            //         displayName: this.props.user.displayName,
-            //     }],
-            //     this.state.phoneNumber,
-            // )
+            if (step === 5) {
+                const {profitSave, entry, cost, risk, goal, datetime} = this.state;
+                const savings = profitSave || Math.abs(entry - cost);
+                this.props.getPlan({
+                    savings,
+                    objective: goal,
+                    risk,
+                    period: this.dateDiffInDays(new Date(), datetime),
+                })
+                // this.props.createMatch(this.props.user && `Partido de ${this.props.user.displayName || this.props.user.email}`,
+                //     this.props.user.uid,
+                //     this.state.matchSize,
+                //     this.state.courtType,
+                //     this.state.end_location,
+                //     this.state.datetime,
+                //     this.state.locationName,
+                //     [{
+                //         id:  this.props.user.uid,
+                //         owner: true,
+                //         email: this.props.user.email,
+                //         displayName: this.props.user.displayName,
+                //     }],
+                //     this.state.phoneNumber,
+                // )
+            }
         });
     }
 
@@ -202,12 +222,16 @@ class MatchCreator extends React.Component {
                                             borderRadius={4}  //optional
                                             backgroundColor={"#20b382"} //optional
                                             containerViewStyle={styles.buttonContainer} //optional
-                                            onPress={() => this.setState({ preferSay: false })}/>
-                                        <Text style={{textAlign: "center", color: '#858b89', marginTop: 30}}> {"Tenga en cuenta que una vez creado su perfil podrá modificar los datos."} </Text>
+                                            onPress={() => this.setState({preferSay: false})}/>
+                                        <Text style={{
+                                            textAlign: "center",
+                                            color: '#858b89',
+                                            marginTop: 30
+                                        }}> {"Tenga en cuenta que una vez creado su perfil podrá modificar los datos."} </Text>
                                     </View>
                                 </View>
                                 }
-                                { !this.state.preferSay &&
+                                {!this.state.preferSay &&
                                 <View style={{...styles.row, marginTop: misc.window_height * 0.1}}>
                                     <FormLabel labelStyle={styles.formLabel}
                                                containerStyle={styles.formLabelContainer}>{"Ingrese diferencia entre sus ingresos y egresos"}</FormLabel>
@@ -282,7 +306,9 @@ class MatchCreator extends React.Component {
                                             titleStyle={{marginLeft: 20, fontSize: 30}}
                                             subtitleStyle={{marginLeft: 20}}
                                             // avatar={{uri: l.avatar_url}}
-                                            onPress={() => this.onSubmit(3)}
+                                            onPress={() => {
+                                                this.setState({risk: l.key}, () => this.onSubmit(3));
+                                            }}
                                             leftIcon={l.leftIcon}
                                             key={l.key}
                                             title={l.name}
@@ -430,7 +456,7 @@ function mapStateToProps(state, props) {
 }
 
 
-export default connect(mapStateToProps, {createMatch})(MatchCreator);
+export default connect(mapStateToProps, {getPlan})(MatchCreator);
 
 
 const styles = StyleSheet.create({

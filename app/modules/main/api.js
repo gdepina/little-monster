@@ -1,10 +1,10 @@
 import axios from 'axios';
 
 import firebase from "../../config/firebase";
-import {API_URL} from "../../config/constants";
+import {API_URL, BACK_API_URL} from "../../config/constants";
 
 const database = firebase.database();
-import matchModel from '../../models/match'
+import investModel from '../../models/invest'
 import playerModel from '../../models/player'
 
 export async function getMovies(search) {
@@ -39,6 +39,20 @@ export async function like(opt) {
     return response.data;
 }
 
+export async function getPlan(options) {
+    const params = new URLSearchParams(options);
+
+    let url = `${BACK_API_URL}?${params.toString()}`;
+    let response = await axios.get(url);
+    return response.data;
+}
+
+// add new section
+export function addInvest(options) {
+    let key = database.ref('/invest').push().key;
+    let model = investModel(key, firebase.database.ServerValue.TIMESTAMP, ...options);
+    return { prom: database.ref('/invest/'+ key).set(model), key}
+}
 
 export function addPlayerItem(matchId, playerId, email, displayName) {
     return new Promise((resolve, reject) => {
