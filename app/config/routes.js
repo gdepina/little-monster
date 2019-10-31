@@ -6,7 +6,7 @@ import Splash from '../modules/splash/Splash';
 import Home from '../modules/main/scenes/Home';
 //import MatchCreator from '../modules/main/scenes/MatchCreator';
 import Detail from '../modules/main/scenes/Detail';
-import MovieList from '../modules/main/scenes/MovieList';
+import InvestAdviceList from '../modules/main/scenes/InvestAdviceList';
 import InvestCreator from '../modules/main/scenes/InvestCreator';
 import TabBarIcon from './TabBarIcon'
 
@@ -19,6 +19,7 @@ import firebase from "../config/firebase"
 import { actions } from "../modules/auth"
 import {connect} from 'react-redux';
 
+
 const MoreIcon = require('./more.png');
 
 const { storeUser } = actions;
@@ -30,14 +31,16 @@ class Routes extends React.Component {
         super();
         this.state = {
             isReady: false,
-            isLoggedIn: false
+            isLoggedIn: false,
         }
     }
 
     componentDidMount() {
         console.ignoredYellowBox = ['Setting a timer']
         this.checkToken();
+
     }
+
 
     checkToken() {
         firebase.auth().onAuthStateChanged((user) => {
@@ -76,18 +79,11 @@ class Routes extends React.Component {
                     {/*</Stack>*/}
 
                     <Stack key="Main" initial={this.state.isLoggedIn}>
-                        <Scene key='root' tabs={false} hideNavBar
-                               activeTintColor={'white'}
-                               tabBarStyle={{
-                                     backgroundColor: '#282828'
-
-                        }}>
-                            <Scene key="Explore" component={InvestCreator} title="Tendencias"  initial={true} user={this.state.user} icon={(focused) => icon({focused, type: 'podium'})} hideNavBar />
-                            <Scene key="MovieList" component={MovieList} title="Buscar" user={this.state.user} icon={(focused) => icon({focused, type: 'search'})} hideNavBar/>
-                            <Scene key="Home" component={Home} title="Perfil" type={ActionConst.REPLACE} icon={(focused) => icon({focused, type: 'contact'})} hideNavBar />
-                        </Scene>
+                        <Scene key="Explore" component={InvestCreator} title="Comenzemos"  initial={true} user={this.state.user} icon={(focused) => icon({focused, type: 'podium'})} hideNavBar />
+                        <Scene key="InvestAdviceList" component={InvestAdviceList} title="Elige el mix" user={this.state.user} icon={(focused) => icon({focused, type: 'search'})} renderBackButton={()=>(null)} renderLeftButton={()=>(null)} />
+                        <Scene key="Home" component={Home} title="Perfil"  type={ActionConst.REPLACE} icon={(focused) => icon({focused, type: 'contact'})} hideNavBar />
                         <Scene key="ChangePass" component={ChangePw} title="Cambiar contraseña"/>
-                        <Scene key="Detail" component={Detail} title="Detalle"  user={this.state.user} />
+                        <Scene key="Detail" component={Detail} title="Composición del mix"  user={this.state.user} />
                     </Stack>
                 </Scene>
             </Router>

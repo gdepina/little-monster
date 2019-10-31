@@ -5,39 +5,7 @@ import {API_URL, BACK_API_URL} from "../../config/constants";
 
 const database = firebase.database();
 import investModel from '../../models/invest'
-import playerModel from '../../models/player'
 
-export async function getMovies(search) {
-    let url = `${API_URL}/movies`;
-    if (search) url += `?s=${search}`;
-    let response = await axios.get(url);
-    return response.data;
-}
-
-// get specified section
-export async function getMovie(movieId) {
-    let url = `${API_URL}/movies/${movieId}`;
-    let response = await axios.get(url);
-    return response.data;
-}
-
-// get specified section
-export async function getComments(userId) {
-    let url = `${API_URL}/comments/${userId}`;
-    let response = await axios.get(url);
-    return response.data;
-}
-
-
-// add new section
-export async function like(opt) {
-    let url = `${API_URL}/rates`;
-    const body = {
-        ...opt
-    }
-    let response = await axios.put(url, body);
-    return response.data;
-}
 
 export async function getPlan(options) {
     const params = new URLSearchParams(options);
@@ -47,27 +15,24 @@ export async function getPlan(options) {
     return response.data;
 }
 
-// add new section
-export function addInvest(options) {
-    let key = database.ref('/invest').push().key;
-    let model = investModel(key, firebase.database.ServerValue.TIMESTAMP, ...options);
-    return { prom: database.ref('/invest/'+ key).set(model), key}
+function convertDateToString(date) {
+    const day = date.getDate();
+    const month = date.getMonth(); //Be careful! January is 0 not 1
+    var year = date.getFullYear();
+
+    return (month + 1) + "-" + day + "-" + year;
 }
 
-export function addPlayerItem(matchId, playerId, email, displayName) {
-    return new Promise((resolve, reject) => {
-        database.ref(`/match/${matchId}/players`).once('value').then((player) => {
-            let players = player.val() || [];
-            players.push(playerModel(playerId, email, displayName))
-            database.ref(`/match/${matchId}/players`).set(players)
-                .then(res => {
-                    resolve(res)
-                })
-                .catch(error => {
-                    reject(error)
-                })
-        })
-    })
+// add new section
+export function addInvest(options) {
+    const {userId, entry, cost, savings, risk, goal, initialDate, goalDate, desc, advice} = options;
+    let key = database.ref('/invest').push().key;
+    let model = investModel(key, firebase.database.ServerValue.TIMESTAMP, userId, entry, cost, savings, risk, goal, convertDateToString(initialDate), convertDateToString(goalDate), desc, advice);
+    return {prom: database.ref('/invest/' + key).set(model), key}
+}
+
+export function getInvestByUserId(userId) {
+    return database.ref('/invest').orderByChild('userId').equalTo(userId).once('value');
 }
 
 export function removePlayerItem(matchId, playerId) {

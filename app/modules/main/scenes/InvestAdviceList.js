@@ -4,49 +4,36 @@ const {View, StyleSheet, Dimensions, FlatList, ActivityIndicator, TouchableOpaci
 
 import Spinner from 'react-native-loading-spinner-overlay';
 
-import {SearchBar, List, ListItem} from 'react-native-elements'
-import PosterCmp from '../components/Poster';
-import debounce from 'lodash.debounce';
-import isEqual from 'lodash.isequal';
+import {List, ListItem} from 'react-native-elements'
 import LottieView from "lottie-react-native";
 
 import {connect} from 'react-redux';
+
 const movie = require('./assets/sorry.json');
 
-
-import {actions} from "../"
 import {AppFontLoader} from '../../AppFontLoader';
 import {Actions} from "react-native-router-flux";
 import {Text} from "react-native";
 
 
-const { loadMovies } = actions;
-
 const {width, height} = Dimensions.get('window');
 
-class MovieList extends React.Component {
+const profileRiskTranslations = {
+    low: 'Bajo',
+    moderated: 'Moderado',
+    high: 'Alto',
+}
+
+class InvestAdviceList extends React.Component {
     constructor() {
         super();
-        this.filterByValue = this.filterByValue.bind(this);
         this.renderFooter = this.renderFooter.bind(this);
+        this.onPressRow = this.onPressRow.bind(this);
 
         this.state = {
             loading: true,
             data: null,
             spinner: false,
-        }
-    }
-
-    componentDidMount() {
-        this.props.loadMovies();
-    }
-
-    componentWillReceiveProps(nextProps) {
-        const { movies } = nextProps;
-        if (!isEqual(nextProps.movies, this.props.movies)) {
-            this.setState({
-                spinner: !(movies && movies.length) && movies !== "",
-            })
         }
     }
 
@@ -61,18 +48,6 @@ class MovieList extends React.Component {
                 }}
             />
         );
-    }
-
-    filterByValue(text) {
-        this.props.loadMovies(text)
-    }
-
-
-    renderHeader() {
-        const debounced = debounce((text) => this.filterByValue(text), 300);
-        ;
-        return <SearchBar noIcon round onChangeText={(text) => debounced(text)} value={this.state.value}
-                          onClearText={null} placeholder='Busca tu serie o peli favorita'/>;
     }
 
     renderFooter() {
@@ -91,34 +66,29 @@ class MovieList extends React.Component {
         );
     };
 
-    onPressRow(id) {
-        // this.props.loadMatch(id)
-        return Actions.Detail({id});
+    onPressRow(advice) {
+        const {entry, cost, savings, risk, goal, period, desc, initialDate, goalDate} = this.props;
+        return Actions.Detail({advice, entry, cost, savings, risk, goal, period, desc, initialDate, goalDate, showButton: true});
     }
 
 
     render() {
-        const movies = this.state.movies || this.props.movies;
+        const plan = this.props.plan;
         return (
             <AppFontLoader>
                 <Spinner
                     visible={this.state.spinner}
                     textContent={'One moment...'}
-                    textStyle={{ color: '#fff' }} />
+                    textStyle={{color: '#fff'}}/>
                 <View style={styles.container}>
-                    {this.renderHeader()}
-                    <List containerStyle={{borderTopWidth: 0, borderBottomWidth: 0, top:-20}}>
+                    {/*{this.renderHeader()}*/}
+                    <List containerStyle={{borderTopWidth: 0, borderBottomWidth: 0, top: -20}}>
                         <FlatList
-                            data={movies ? Object.values(movies) : null}
+                            data={plan.investmentAdvice}
                             ItemSeparatorComponent={this.renderSeparator}
                             ListEmptyComponent={!this.state.spinner && this.getListEmptyComponent}
                             // ListFooterComponent={this.renderFooter}
-                            renderItem={({item}) => (
-                                <TouchableOpacity onPress={() => this.onPressRow(item.imdbID)}>
-                                    <PosterCmp image={item.Poster} title={item.Title} description={`${item.Year} | ${item.Type}`} contentPosition="center" height={height*0.3} overlayAlpha={0.3}>
-                                    </PosterCmp>
-                                </TouchableOpacity>
-                            )}
+                            renderItem={this.getRenderItem()}
                             keyExtractor={item => item.id}
                         />
                     </List>
@@ -126,6 +96,23 @@ class MovieList extends React.Component {
             </AppFontLoader>
 
         )
+    }
+
+    getRenderItem() {
+        return ({item, index}) => {
+            const reducer = (accumulator, currentValue) => accumulator.investmentType + " & " + currentValue.investmentType;
+            const title = item.reduce(reducer);
+            const reducer2 = (accumulator, currentValue) => +accumulator.term + +currentValue.term;
+            const term = item.reduce(reducer2);
+            return <ListItem
+                key={index}
+                roundAvatar
+                title={title}
+                subtitle={`Logra tu obejtivo en ${term} días`}
+                containerStyle={{borderBottomWidth: 0}}
+                onPress={() => this.onPressRow(item)}
+            />
+        }
     }
 
     getListEmptyComponent() {
@@ -143,39 +130,41 @@ class MovieList extends React.Component {
 
 function mapStateToProps(state, props) {
     return {
-        movies: state.mainReducer.movies,
+        plan: state.mainReducer.plan,
         user: state.authReducer.user,
     }
 }
 
-export default connect(mapStateToProps, {loadMovies})(MovieList);
+export default connect(mapStateToProps, null)(InvestAdviceList);
 
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#2B2F32',
-        marginTop:24,
+        backgroundColor: '#fff',
     },
     emptyContainer: {
         flex: 1,
         alignItems: 'center',
         justifyContent: 'center',
-        backgroundColor: '#2B2F32',
+        backgroundColor: '#fff',
     },
     movie: {
         width: width,
-        height: height*0.5,
+        height: height * 0.5,
     },
     shadow: {
         color: '#fff',
-        textShadowOffset: { width: 2, height: 2 },
+        textShadowOffset: {width: 2, height: 2},
         textShadowRadius: 1,
         textShadowColor: '#000',
         fontSize: 20,
         fontWeight: 'bold',
-        width: width*0.8,
+        width: width * 0.8,
         textAlign: 'center',
+    },
+    planItem: {
+        marginLeft: 20,
     }
 });
 

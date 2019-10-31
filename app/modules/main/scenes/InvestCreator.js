@@ -11,6 +11,7 @@ import LottieView from 'lottie-react-native';
 import {Actions} from 'react-native-router-flux';
 import {Feather, MaterialCommunityIcons} from '@expo/vector-icons';
 import {AppFontLoader} from '../../AppFontLoader';
+import Splash from '../../splash/Splash';
 
 
 import {actions} from "../"
@@ -24,7 +25,7 @@ import {misc} from "../../../styles/Theme"
 import Colors from "../../../config/Colors";
 
 const device_width = misc.window_width;
-const {getPlan} = actions;
+const {getPlan, getPlanByUserId} = actions;
 
 
 const profileRisksList = [
@@ -81,6 +82,27 @@ class MatchCreator extends React.Component {
             profitSave: '',
             risk: '',
             preferSay: true,
+            haveInvest: false,
+            isReady: false,
+        }
+    }
+
+    componentWillReceiveProps(nextProps) {
+        if (Object.entries(nextProps.plan).length === 0) {
+            const invest = nextProps.user && nextProps.getPlanByUserId(nextProps.user.uid, () => this.setState({isReady: true}));
+        } else {
+            const {entry, cost, profitSave, risk, goal, dtSince, dtGoal, desc, advice} = nextProps.plan;
+            Actions.Home({
+                entry,
+                cost,
+                savings: profitSave,
+                risk,
+                goal,
+                initialDate: dtSince,
+                goalDate: dtGoal,
+                desc,
+                advice
+            })
         }
     }
 
@@ -118,31 +140,30 @@ class MatchCreator extends React.Component {
         this.setState({
             currentPosition: step,
         }, () => {
-            this.animation && this.animation.play();
+            // this.animation && this.animation.play();
             if (step === 5) {
-                const {profitSave, entry, cost, risk, goal, datetime} = this.state;
+                const {profitSave, entry, cost, risk, goal, datetime, desc} = this.state;
+                const initialDate = new Date();
+                const goalDate = new Date(datetime);
+
                 const savings = profitSave || Math.abs(entry - cost);
+                const period = this.dateDiffInDays(initialDate, goalDate);
                 this.props.getPlan({
                     savings,
                     objective: goal,
                     risk,
-                    period: this.dateDiffInDays(new Date(), datetime),
-                })
-                // this.props.createMatch(this.props.user && `Partido de ${this.props.user.displayName || this.props.user.email}`,
-                //     this.props.user.uid,
-                //     this.state.matchSize,
-                //     this.state.courtType,
-                //     this.state.end_location,
-                //     this.state.datetime,
-                //     this.state.locationName,
-                //     [{
-                //         id:  this.props.user.uid,
-                //         owner: true,
-                //         email: this.props.user.email,
-                //         displayName: this.props.user.displayName,
-                //     }],
-                //     this.state.phoneNumber,
-                // )
+                    period,
+                }, () => Actions.InvestAdviceList({
+                    entry,
+                    cost,
+                    savings,
+                    risk,
+                    goal,
+                    period,
+                    initialDate,
+                    goalDate,
+                    desc
+                }))
             }
         });
     }
@@ -174,10 +195,12 @@ class MatchCreator extends React.Component {
             currentStepLabelColor: '#20b382',
         }
 
+        if (!this.state.isReady) return <Splash/>
+
         return (
             <AppFontLoader>
                 <View style={styles.container}>
-                    <View style={{marginVertical: 46}}>
+                    <View style={{marginVertical: 40}}>
                         <StepIndicator
                             customStyles={customStyles}
                             currentPosition={this.state.currentPosition}
@@ -202,7 +225,7 @@ class MatchCreator extends React.Component {
                                             underlineColorAndroid={"#ccc"}
                                             placeholder={"$ 10000"}
                                             placeholderTextColor={"#E3E3E3"}
-                                            autoFocus={true}
+                                            autoFocus={false}
                                             onChangeText={(entry) => this.setState({entry})}
                                             inputStyle={styles.inputContainer}
                                             keyboardType={'numeric'}
@@ -358,7 +381,6 @@ class MatchCreator extends React.Component {
                                                 underlineColorAndroid={"#ccc"}
                                                 placeholder={"Descripción (opcional)"}
                                                 placeholderTextColor={"#E3E3E3"}
-                                                autoFocus={true}
                                                 onChangeText={(desc) => this.setState({desc})}
                                                 inputStyle={{...styles.inputContainer, fontSize: 20}}
                                                 value={this.state.desc}/>
@@ -452,11 +474,12 @@ class MatchCreator extends React.Component {
 function mapStateToProps(state, props) {
     return {
         user: state.authReducer.user,
+        plan: state.mainReducer.plan,
     }
 }
 
 
-export default connect(mapStateToProps, {getPlan})(MatchCreator);
+export default connect(mapStateToProps, {getPlan, getPlanByUserId})(MatchCreator);
 
 
 const styles = StyleSheet.create({
@@ -504,8 +527,7 @@ const styles = StyleSheet.create({
     },
     formLabelContainer: {
         position: "relative",
-        marginBottom: 10,
-        textAlign: 'center'
+        marginBottom: 10
     },
     picker: {
         width: "90%",

@@ -1,7 +1,7 @@
 import actionType from './actionTypes';
 import * as api from './api';
 
-export function getPlan(options) {
+export function getPlan(options, cb) {
     return dispatch => {
         dispatch({
             type: actionType.LOAD_PLAN_REQUEST
@@ -12,6 +12,34 @@ export function getPlan(options) {
                     type: actionType.LOAD_PLAN_SUCCESS,
                     payload: res,
                 })
+            })
+            .then(() => {
+                cb()
+            })
+            .catch(error => {
+                dispatch({
+                    type: actionType.LOAD_PLAN_FAILED,
+                    payload: error
+                })
+            })
+    }
+}
+
+export function getPlanByUserId(userId, cb) {
+    return dispatch => {
+        dispatch({
+            type: actionType.LOAD_PLAN_REQUEST
+        })
+        api.getInvestByUserId(userId)
+            .then(res => {
+                const purgedVal = Object.values(res.val())[0];
+                dispatch({
+                    type: actionType.LOAD_PLAN_SUCCESS,
+                    payload: purgedVal || {},
+                })
+            })
+            .then(() => {
+                cb()
             })
             .catch(error => {
                 dispatch({
@@ -37,19 +65,20 @@ export function destroyMatch(matchId) {
     }
 }
 
-export function createInvest(name, orgId, matchSize, courtType, location, datetime, locationName, players, phoneNumber) {
+export function createInvest(userId, entry, cost, savings, risk, goal, initialDate, goalDate, desc, advice ) {
     return dispatch => {
         dispatch({
-            type: actionType.ADD_MATCH_REQUEST
+            type: actionType.ADD_INVEST_REQUEST
         })
-        const result = api.addMatch(name, orgId, matchSize, courtType, location, datetime, locationName, players, phoneNumber)
+        const result = api.addInvest({userId, entry, cost, savings, risk, goal, initialDate, goalDate, desc, advice});
         result.prom
-            .then(() => {
-                loadMatchs(result.key)(dispatch) //refresh the data to keep up-to-date
+            .then((res) => {
+                // console.log(res)
+                // loadMatchs(result.key)(dispatch) //refresh the data to keep up-to-date
             })
             .catch(error => {
                 dispatch({
-                    type: actionType.ADD_MATCH_FAILED,
+                    type: actionType.ADD_INVEST_FAILED,
                     payload: error
                 })
             })

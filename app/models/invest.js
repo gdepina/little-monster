@@ -1,13 +1,15 @@
-export default (id, timestamp, userId, mix, entry, cost, goal, desc, profitSave, dtSince ,dtGoal) => ({
+export default (id, timestamp, userId, entry, cost, savings, risk, goal, dtSince, dtGoal, desc, advice) => ({
     id: id,
     userId: userId,
     timestamp: timestamp,
-    mix: mix,
+    advice: advice,
     entry: entry,
     cost: cost,
     goal: goal,
     desc: desc,
-    profitSave: profitSave,
+    risk: risk,
+    profitSave: savings,
     dtSince: dtSince,
     dtGoal: dtGoal
 })
+

@@ -5,20 +5,20 @@ import {
     StyleSheet,
     View,
     ScrollView,
-    TouchableOpacity,
     Text,
-    Modal,
-    Button,
-    ImageBackground
+    FlatList,
 } from "react-native";
-import {ListItem, FormInput, FormLabel, Card} from 'react-native-elements';
-import PosterCmp from '../components/Poster';
+import {ListItem, FormInput, FormLabel, Card, List, Button} from 'react-native-elements';
 import {actions} from "../"
 import {MaterialIcons, Foundation, Feather} from '@expo/vector-icons';
 
 import Colors from "../../../config/Colors";
+import * as Theme from "../../../styles/Theme";
+import {Actions} from "react-native-router-flux";
 
-const {loadMovie, like} = actions;
+const {padding} = Theme;
+
+const {createInvest} = actions;
 
 //para obtener dimension de la pantalla
 const {width, height} = Dimensions.get('window');
@@ -26,200 +26,86 @@ const {width, height} = Dimensions.get('window');
 class MoviePoster extends Component {
     constructor() {
         super();
-        this.buildPoster = this.buildPoster.bind(this);
-        this.onLike = this.onLike.bind(this);
-        this.onDisLike = this.onDisLike.bind(this);
-        this.like = this.like.bind(this);
-        this.buildModal = this.buildModal.bind(this);
-        this.addComment = this.addComment.bind(this);
-        this.closeComment = this.closeComment.bind(this);
-        this.checkIfLiked = this.checkIfLiked.bind(this);
-
+        this.onSubmit = this.onSubmit.bind(this);
         this.state = {
-            isModalVisible: false,
-            value: 'Ingresa tu comentario'
+            disabled: false,
         };
 
     }
 
-    componentDidMount() {
-        this.props.loadMovie(this.props.id)
-    }
-
-    onLike() {
-        this.like(true);
-    }
-
-    onDisLike() {
-        this.like(false);
-    }
-
-    checkIfLiked() {
-        const {currentMovie, likes} = this.props;
-        const found = likes && likes.length && likes.find((element) => element === currentMovie.imdbID);
-        return !!found;
-    }
-
-    like(isPositive) {
-        const {imdbID, Title,} = this.props.currentMovie;
-        const {uid, displayName} = this.props.user;
-
-        (!this.checkIfLiked() || isPositive === null) && this.props.like({
-            omdbId: imdbID,
-            isPositive,
-            movieName: Title,
-            userName: displayName,
-            userId: uid,
-            comment: this.state.text || null,
-        });
-    }
-
-    buildComments() {
-        const {comments} = this.props.currentMovie;
-        return (
-            <ScrollView horizontal={true} contentContainerStyle={styles.listcontainer}>
-                {
-                    comments && comments.reverse().map((l, i) => (
-                        <Card containerStyle={styles.cardContainer}>
-                            <Text style={{
-                                fontStyle: 'italic', fontWeight: 'bold', fontSize: 16, color: '#ccc',
-                                textShadowOffset: {width: 2, height: 2},
-                                textShadowRadius: 1,
-                                textShadowColor: '#000',
-                            }}>
-                                "{l.comment.comment}"
-                            </Text>
-                            <Text style={{
-                                marginTop: 10, textAlign: 'right', fontSize: 14, fontWeight: 'bold', color: '#ccc',
-                                textShadowOffset: {width: 2, height: 2},
-                                textShadowRadius: 1,
-                                textShadowColor: '#000',
-                            }}>
-                                {l.comment.userName}
-                            </Text>
-                        </Card>
-                    ))
-                }
-            </ScrollView>
-        )
-    }
-
-    addComment() {
-
-        this.setState({isModalVisible: !this.state.isModalVisible});
-
+    onSubmit() {
+        const {entry, cost, savings, risk, goal, initialDate, goalDate, desc, createInvest, user, advice, period} = this.props;
+        this.setState({ disabled: true }, () => {
+            createInvest(user.uid, entry, cost, savings, risk, goal, initialDate, goalDate, desc, advice);
+            Actions.Home({ entry, cost, savings, risk, goal, initialDate, goalDate, desc, advice, period});
+        })
 
     }
 
-    closeComment() {
-        this.setState({isModalVisible: false, text: null});
-    }
+    renderBody(item) {
+        const profileRiskTranslations = {
+            low: 'Bajo',
+            moderated: 'Moderado',
+            high: 'Alto',
+        }
+        const dayTranslation = {
+            day: 'días',
+        }
+        const {investmentType, expectedProfit, risk, term, period} = item;
 
-
-    buildPoster() {
-        const {Poster, Title, description, Runtime, Year, positiveCount, negativeCount} = this.props.currentMovie;
-        const clockIcon = (<Foundation
-            name={'clock'}
-            size={18}
-            color={Colors.tabIconDefault}
-        />)
-
-        const calendarIcon = (<Feather
-            name={'calendar'}
-            size={18}
-            color={Colors.tabIconDefault}
-        />)
-        const liked = !this.checkIfLiked() ? 0.2 : 0;
-
-        return (<View style={styles.container}>
-            <PosterCmp image={Poster} title={Title} description={description} contentPosition="bottom" overlayAlpha={0.5}
-                       height={height * 0.87}>
-                <View style={styles.iconContainer}>
-                    <Text numberOfLines={4}
-                          style={styles.shadowRuntime}>{calendarIcon}{` ${Year}  `}{clockIcon}{` ${Runtime}`}</Text>
-                    <View style={styles.rate}>
-                        <TouchableOpacity onPress={this.onLike} style={{marginRight: 25}} activeOpacity={liked}>
-                            <Foundation
-                                name={'like'}
-                                size={40}
-                                color={"#46D369"}
-                            />
-                            <Text style={styles.shadow}>{positiveCount}</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity onPress={this.onDisLike} activeOpacity={liked}>
-                            <Foundation
-                                name={'dislike'}
-                                size={40}
-                                color={"#E50A13"}
-                            />
-                            <Text style={styles.shadow}>{negativeCount}</Text>
-                        </TouchableOpacity>
-                    </View>
-                </View>
-                <View style={{ flexDirection: 'row' }}>
-                    <Text style={styles.title}>{"Comentarios"}</Text>
-                    <View style={{ marginTop: 25, marginLeft: 15 }}>
-                        <TouchableOpacity onPress={this.addComment}>
-                            <Feather
-                                name={'plus-circle'}
-                                size={30}
-                                color={"#E50A13"}
-                            />
-                        </TouchableOpacity>
-
-                    </View>
-                </View>
-                {(this.props.currentMovie && this.props.currentMovie.comments) && this.buildComments()}
-            </PosterCmp>
+        const translatedRisk = profileRiskTranslations[risk.toLowerCase()];
+        const translatedDatetime = dayTranslation[period.toLowerCase()];
+        return (<View>
+            <View>
+                <FormLabel>{`Rendimiento - ${investmentType}: `} <Text style={styles.planItem}
+                                                                       h5>{expectedProfit}</Text></FormLabel>
+            </View>
+            <View>
+                <FormLabel>{'Riesgo: '} <Text style={styles.planItem} h5>{translatedRisk}</Text></FormLabel>
+            </View>
+            <View>
+                <FormLabel>{'Duración: '} <Text style={styles.planItem}
+                                                h5>{`${term} ${translatedDatetime}`}</Text></FormLabel>
+            </View>
         </View>)
     }
+
+    getRenderItem() {
+        return ({item, index}) => {
+            const {investmentType} = item;
+            return (<Card title={`#${index + 1} ${investmentType}`}>
+                {this.renderBody(item)}
+            </Card>)
+
+        }
+    }
+
 
     render() {
         return (
             <ScrollView style={styles.scrollViewContainer}>
-                {this.props.currentMovie && this.buildPoster()}
-                {this.buildModal()}
-            </ScrollView>
-        )
-    }
-
-    buildModal() {
-        return (
-            <Modal visible={this.state.isModalVisible} animationType="fade" transparent={false}>
-                <View style={{backgroundColor: '#2B2F32', height: height}}>
-                    <TouchableOpacity onPress={this.closeComment}>
-                        <View styles={styles.cross}>
-                            <Text style={{marginLeft: 'auto', marginTop: 15, marginRight: 15}}>
-                                <Foundation
-                                    name={'x'}
-                                    size={25}
-                                    color={Colors.tabIconDefault}
-                                />
-                            </Text>
-                        </View>
-                    </TouchableOpacity>
-
-                    <FormLabel labelStyle={{fontSize: 20, right: 5}}>Ingresa tu comentario:</FormLabel>
-                    <FormInput
-                        autoFocus
-                        inputStyle={styles.textInput}
-                        multiline={true}
-                        placeholder='Por ejemplo: Excelente pelicula, gran papel de Liam Neeson.'
-                        textarea value={this.state.value}
-                        maxLength={200}
-                        onChangeText={(text) => this.setState({text})}
-                        value={this.state.text}
-                    />
-                    <View style={styles.buttonModalContainer}>
-                        <Button
-                            raised
-                            onPress={() => Promise.resolve(this.like(null)).then(this.closeComment())}
-                            title="Guardar"
-                            color="#E50A13"
+                <View style={styles.container}>
+                    <List containerStyle={{borderTopWidth: 0, borderBottomWidth: 0, top: -20}}>
+                        <FlatList
+                            data={this.props.advice}
+                            ItemSeparatorComponent={this.renderSeparator}
+                            ListEmptyComponent={!this.state.spinner && this.getListEmptyComponent}
+                            // ListFooterComponent={this.renderFooter}
+                            renderItem={this.getRenderItem()}
+                            keyExtractor={item => item.id}
                         />
-                    </View>
+                        { this.props.showButton && <Button
+                            raised
+                            title={'Elegir'}
+                            borderRadius={4}  //optional
+                            backgroundColor={"#20b382"} //optional
+                            containerViewStyle={styles.buttonContainer} //optional
+                            onPress={this.onSubmit}
+                            disabled={this.state.disabled}
+                        />}
+                    </List>
                 </View>
-            </Modal>
+            </ScrollView>
         )
     }
 }
@@ -230,7 +116,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#fff',
     },
     scrollViewContainer: {
-        flex:1
+        flex: 1
     },
     buttonModalContainer: {
         width: width * 0.9,
@@ -246,6 +132,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between',
     },
+    inline: {flex: 1, flexDirection: 'row'},
     textInput: {
         // borderBottomColor: '#9E9E9E',
         // borderBottomWidth: 2,
@@ -286,17 +173,23 @@ const styles = StyleSheet.create({
         textShadowColor: '#000',
         marginTop: 25,
     },
+    planItem: {
+        fontWeight: 'bold',
+        color: '#000',
+    },
+    buttonContainer: {
+        marginVertical: padding * 2,
+        marginHorizontal: 0
+    },
 
 });
 
 function mapStateToProps(state, props) {
     return {
-        currentMovie: state.mainReducer.currentMovie,
         user: state.authReducer.user,
-        likes: state.mainReducer.likes,
     }
 }
 
-export default connect(mapStateToProps, {loadMovie, like})(MoviePoster);
+export default connect(mapStateToProps, {createInvest })(MoviePoster);
 
 
