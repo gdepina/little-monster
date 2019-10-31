@@ -56,12 +56,13 @@ export function updateUser(userId, data, successCB, errorCB) {
     };
 }
 
-export function signOut(successCB, errorCB) {
+export function signOut(successCB, errorCB, cleanCb) {
     return (dispatch) => {
         api.signOut(function (success, data, error) {
             if (success) {
                 dispatch({type: t.LOGGED_OUT});
                 successCB();
+                cleanCb();
             }else if (error) errorCB(error)
         });
     };

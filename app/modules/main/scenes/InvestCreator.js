@@ -12,6 +12,7 @@ import {Actions} from 'react-native-router-flux';
 import {Feather, MaterialCommunityIcons} from '@expo/vector-icons';
 import {AppFontLoader} from '../../AppFontLoader';
 import Splash from '../../splash/Splash';
+import Home from './Home';
 
 
 import {actions} from "../"
@@ -69,8 +70,8 @@ const profileRisksList = [
 
 
 class MatchCreator extends React.Component {
-    constructor() {
-        super();
+    constructor(props) {
+        super(props);
         this.onPressIndicator = this.onPressIndicator.bind(this);
         this.onSubmit = this.onSubmit.bind(this);
         this.state = {
@@ -83,13 +84,20 @@ class MatchCreator extends React.Component {
             risk: '',
             preferSay: true,
             haveInvest: false,
-            isReady: false,
+            isReady: props.plan && Object.entries(props.plan).length > 0,
         }
     }
 
+    componentDidMount() {
+        if (this.props.plan && Object.entries(this.props.plan).length === 0) {
+            this.props.user && this.props.user.uid && this.props.getPlanByUserId(this.props.user.uid, () => this.setState({isReady: true}));
+        }
+    }
+
+
     componentWillReceiveProps(nextProps) {
-        if (Object.entries(nextProps.plan).length === 0) {
-            const invest = nextProps.user && nextProps.getPlanByUserId(nextProps.user.uid, () => this.setState({isReady: true}));
+        if (nextProps.plan && Object.entries(nextProps.plan).length === 0) {
+            nextProps.user &&  nextProps.user.uid && nextProps.getPlanByUserId(nextProps.user.uid, () => this.setState({isReady: true}));
         } else {
             const {entry, cost, profitSave, risk, goal, dtSince, dtGoal, desc, advice} = nextProps.plan;
             Actions.Home({
@@ -195,7 +203,26 @@ class MatchCreator extends React.Component {
             currentStepLabelColor: '#20b382',
         }
 
-        if (!this.state.isReady) return <Splash/>
+        if (!this.state.isReady)
+            return <Splash/>
+
+        if (this.props.plan && Object.entries(this.props.plan).length > 0) {
+            const {entry, cost, profitSave, risk, goal, dtSince, dtGoal, desc, advice} = this.props.plan;
+            const homeProps = {
+                entry,
+                cost,
+                savings: profitSave,
+                risk,
+                goal,
+                initialDate: dtSince,
+                goalDate: dtGoal,
+                desc,
+                advice
+            }
+            return <Home {...homeProps} />;
+        }
+
+        // if (!this.state.isReady) return <Splash/>
 
         return (
             <AppFontLoader>

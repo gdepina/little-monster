@@ -73,7 +73,7 @@ class InvestAdviceList extends React.Component {
 
 
     render() {
-        const plan = this.props.plan;
+        const mixes = this.props.mixes;
         return (
             <AppFontLoader>
                 <Spinner
@@ -84,7 +84,7 @@ class InvestAdviceList extends React.Component {
                     {/*{this.renderHeader()}*/}
                     <List containerStyle={{borderTopWidth: 0, borderBottomWidth: 0, top: -20}}>
                         <FlatList
-                            data={plan.investmentAdvice}
+                            data={mixes.investmentAdvice}
                             ItemSeparatorComponent={this.renderSeparator}
                             ListEmptyComponent={!this.state.spinner && this.getListEmptyComponent}
                             // ListFooterComponent={this.renderFooter}
@@ -130,7 +130,7 @@ class InvestAdviceList extends React.Component {
 
 function mapStateToProps(state, props) {
     return {
-        plan: state.mainReducer.plan,
+        mixes: state.mainReducer.mixes,
         user: state.authReducer.user,
     }
 }

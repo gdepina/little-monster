@@ -9,7 +9,7 @@ export function getPlan(options, cb) {
         api.getPlan(options)
             .then(res => {
                 dispatch({
-                    type: actionType.LOAD_PLAN_SUCCESS,
+                    type: actionType.LOAD_MIXES_SUCCESS,
                     payload: res,
                 })
             })
@@ -32,11 +32,13 @@ export function getPlanByUserId(userId, cb) {
         })
         api.getInvestByUserId(userId)
             .then(res => {
-                const purgedVal = Object.values(res.val())[0];
-                dispatch({
-                    type: actionType.LOAD_PLAN_SUCCESS,
-                    payload: purgedVal || {},
-                })
+                const purgedVal = res.val() ? Object.values(res.val())[0] : res.val();
+                if  (res.val()) {
+                    dispatch({
+                        type: actionType.LOAD_PLAN_SUCCESS,
+                        payload: purgedVal || {},
+                    })
+                }
             })
             .then(() => {
                 cb()
@@ -62,6 +64,14 @@ export function destroyMatch(matchId) {
                     payload: error
                 })
             })
+    }
+}
+
+export function cleanPlan() {
+    return dispatch => {
+        dispatch({
+            type: actionType.CLEAN_PLAN
+        })
     }
 }
 

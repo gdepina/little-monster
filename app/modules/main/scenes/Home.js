@@ -8,13 +8,14 @@ import OptionsMenu from 'react-native-options-menu';
 import Colors from '../../../config/Colors';
 
 import {actions as auth} from "../../auth"
+import {actions as main} from "../../main"
 
 var {signOut} = auth;
 import {actions, reducer as mainReducer} from "../"
 import {Card, ListItem, Button, Icon, FormLabel} from 'react-native-elements'
 import isEqual from 'lodash.isequal';
 
-const {loadComments} = actions;
+const {cleanPlan} = main;
 
 const {width, height} = Dimensions.get('window');
 const MoreIcon = require('./assets/more.png');
@@ -31,7 +32,7 @@ class Home extends React.Component {
 
 
     onSignOut() {
-        this.props.signOut(this.onSuccess.bind(this), this.onError.bind(this))
+        this.props.signOut(this.onSuccess.bind(this), this.onError.bind(this), this.props.cleanPlan)
     }
 
     onSuccess() {
@@ -52,6 +53,7 @@ class Home extends React.Component {
     }
 
     stringToDateTiem(string) {
+        if (typeof string !== 'string') return string;
         const splitted = string.split('-', 3);
         const month = +splitted[0];
         const day = +splitted[1];
@@ -64,7 +66,7 @@ class Home extends React.Component {
         const {entry, cost, savings, risk, goal, initialDate, goalDate, desc, advice} = this.props;
         const diffFromNow = this.dateDiffInDays(new Date(), this.stringToDateTiem(goalDate));
         const period = this.dateDiffInDays(this.stringToDateTiem(initialDate), this.stringToDateTiem(goalDate));
-        const percentPeriod = Math.abs((diffFromNow - period) / period * 100);
+        const percentPeriod = parseInt(Math.abs(diffFromNow - period) / period * 100);
         return (
             <ImageBackground
                 style={{
@@ -79,7 +81,7 @@ class Home extends React.Component {
             >
                 <View style={styles.container}>
                     <View style={styles.topBar}>
-                        <Text style={styles.title}>{`Plan de Ahorro de ${this.props.user.displayName }`}</Text>
+                        <Text style={styles.title}>{`Plan de Ahorro de ${this.props.user && this.props.user.displayName }`}</Text>
                         <OptionsMenu
                             button={MoreIcon}
                             buttonStyle={{
@@ -114,7 +116,7 @@ class Home extends React.Component {
                                     </View>
                                 )}
                             </AnimatedCircularProgress>
-                            <Card containerStyle={styles.card} title={`En qué estoy invirtiendo`} titleStyle={{fontSize: 15, color: '#20b382'}}>
+                            <Card containerStyle={styles.card} title={`Sugerencía de inversión`} titleStyle={{fontSize: 15, color: '#20b382'}}>
                                 {/*{this.renderBody(item)}*/}
                                 {advice && advice.map((item, index) => (
                                     <View>
@@ -162,7 +164,7 @@ function mapStateToProps(state, props) {
     }
 }
 
-export default connect(mapStateToProps, {signOut})(Home);
+export default connect(mapStateToProps, {signOut, cleanPlan})(Home);
 
 
 const styles = StyleSheet.create({

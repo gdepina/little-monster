@@ -69,7 +69,7 @@ class Routes extends React.Component {
               >
                 <Scene key="root" hideNavBar>
                     <Stack key="Auth" initial={!this.state.isLoggedIn}>
-                        <Scene key="Welcome" component={Welcome} title="Todas las pelis en un solo lugar" initial={true} hideNavBar/>
+                        <Scene key="Welcome" component={Welcome} title="Money Fit" initial={true} hideNavBar/>
                         <Scene key="Register" component={Register} title="Crea tu cuenta"/>
                         <Scene key="Login" component={Login} title="Ingreso"/>
                     </Stack>

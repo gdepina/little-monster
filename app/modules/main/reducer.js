@@ -13,6 +13,14 @@ const moviesReducer = (state = initialState, action) => {
             state = Object.assign({}, state, {plan: action.payload});
             return state;
 
+        case t.LOAD_MIXES_SUCCESS:
+            state = Object.assign({}, state, {mixes: action.payload});
+            return state;
+
+        case t.CLEAN_PLAN:
+            state = Object.assign({}, state, {plan: {}});
+            return state;
+
         case t.LOAD_COMMENTS_SUCCESS:
             state = Object.assign({}, state, {comments: action.payload});
             return state;

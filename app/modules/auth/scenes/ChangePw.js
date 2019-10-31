@@ -69,7 +69,7 @@ class ChangePw extends React.Component {
     onError(error) {
         this.setState({spinner: false});
         Alert.alert('Oops!', error.message);
-    }
+    }r
 
     render() {
         return (
