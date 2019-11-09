@@ -4,7 +4,7 @@ const {View, StyleSheet, Dimensions, FlatList, ActivityIndicator, TouchableOpaci
 
 import Spinner from 'react-native-loading-spinner-overlay';
 
-import {List, ListItem} from 'react-native-elements'
+import {List, ListItem, Text} from 'react-native-elements'
 import LottieView from "lottie-react-native";
 
 import {connect} from 'react-redux';
@@ -13,7 +13,6 @@ const movie = require('./assets/sorry.json');
 
 import {AppFontLoader} from '../../AppFontLoader';
 import {Actions} from "react-native-router-flux";
-import {Text} from "react-native";
 
 
 const {width, height} = Dimensions.get('window');
@@ -68,7 +67,19 @@ class InvestAdviceList extends React.Component {
 
     onPressRow(advice) {
         const {entry, cost, savings, risk, goal, period, desc, initialDate, goalDate} = this.props;
-        return Actions.Detail({advice, entry, cost, savings, risk, goal, period, desc, initialDate, goalDate, showButton: true});
+        return Actions.Detail({
+            advice,
+            entry,
+            cost,
+            savings,
+            risk,
+            goal,
+            period,
+            desc,
+            initialDate,
+            goalDate,
+            showButton: true
+        });
     }
 
 
@@ -84,7 +95,7 @@ class InvestAdviceList extends React.Component {
                     {/*{this.renderHeader()}*/}
                     <List containerStyle={{borderTopWidth: 0, borderBottomWidth: 0, top: -20}}>
                         <FlatList
-                            data={mixes.investmentAdvice}
+                            data={mixes}
                             ItemSeparatorComponent={this.renderSeparator}
                             ListEmptyComponent={!this.state.spinner && this.getListEmptyComponent}
                             // ListFooterComponent={this.renderFooter}
@@ -98,18 +109,37 @@ class InvestAdviceList extends React.Component {
         )
     }
 
+    renderCustomSubtitle(text) {
+        return (<Text style={{ marginLeft: 10, fontSize: 16 }}>{'Ganancia: ARS '}<Text style={{ color: '#20b382',fontSize: 17, fontWeight: 'bold' }}>{`$ ${text}`}</Text></Text>)
+    }
+
     getRenderItem() {
         return ({item, index}) => {
-            const reducer = (accumulator, currentValue) => accumulator.investmentType + " & " + currentValue.investmentType;
-            const title = item.reduce(reducer);
-            const reducer2 = (accumulator, currentValue) => +accumulator.term + +currentValue.term;
-            const term = item.reduce(reducer2);
+            const investMap = (invest) => {
+                let investName = invest.investmentType;
+                if (invest.investmentType.indexOf(" ") !== -1) {
+                    investName = invest.investmentType.substr(0, invest.investmentType.indexOf(" "));
+                }
+                return investName;
+            }
+            const titles = item.map(invest => investMap(invest));
+            const title = titles.join(' & ');
+            //const reducer2 = (accumulator, currentValue) => +accumulator.term + +currentValue.term;
+            const profit = item.reduce((acc, obj) => acc + obj.effectiveProfit, 0);
+            const maxPeriod = Math.max(...item.map(o => o.period), 0);
+
+
             return <ListItem
                 key={index}
                 roundAvatar
-                title={title}
-                subtitle={`Logra tu obejtivo en ${term} días`}
-                containerStyle={{borderBottomWidth: 0}}
+                title={`${title}`}
+                rightTitleNumberOfLines={1}
+                subtitle={this.renderCustomSubtitle(parseInt(profit))}
+                leftIcon={ <Text style={{ color:'#20b382', marginTop: 10, fontSize: 18, fontWeight: 'bold' }}>{`#${index + 1}`}</Text> }
+                // badge={{value: `ARS $${parseInt(profit)}`}}
+                titleStyle={{ marginBottom: 5, marginLeft: 10 }}
+                badge={{value: `${maxPeriod} días`, containerStyle: { marginTop: 10 }}}
+                containerStyle={{borderBottomWidth: 0, height: 100,  alignItems:'center', justifyContent:'center'}}
                 onPress={() => this.onPressRow(item)}
             />
         }
@@ -123,7 +153,7 @@ class InvestAdviceList extends React.Component {
                 loop
                 autoPlay
             />
-            <Text style={styles.shadow}>Ops, no encontramos resultados para tu busqueda</Text>
+            <Text style={styles.shadow}>Ops, no pudimos calcular un mix.</Text>
         </View>)
     }
 }

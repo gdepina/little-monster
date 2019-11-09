@@ -11,6 +11,7 @@ export async function getPlan(options) {
     const params = new URLSearchParams(options);
 
     let url = `${BACK_API_URL}?${params.toString()}`;
+    console.log('url >>>>',url)
     let response = await axios.get(url);
     return response.data;
 }

@@ -21,6 +21,7 @@ export function getPlan(options, cb) {
                     type: actionType.LOAD_PLAN_FAILED,
                     payload: error
                 })
+                cb()
             })
     }
 }

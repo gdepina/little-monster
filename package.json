@@ -40,6 +40,7 @@
     "react-native-keyboard-spacer": "^0.4.1",
     "react-native-loading-spinner-overlay": "^0.5.2",
     "react-native-number-stepper": "0.0.2",
+    "react-native-onboarding-swiper": "^1.1.0",
     "react-native-options-menu": "^2.0.2",
     "react-native-phone-input": "^0.2.1",
     "react-native-picker-select": "^5.0.0",

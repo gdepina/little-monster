@@ -80,7 +80,7 @@ class Routes extends React.Component {
 
                     <Stack key="Main" initial={this.state.isLoggedIn}>
                         <Scene key="Explore" component={InvestCreator} title="Comenzemos"  initial={true} user={this.state.user} icon={(focused) => icon({focused, type: 'podium'})} hideNavBar />
-                        <Scene key="InvestAdviceList" component={InvestAdviceList} title="Elige el mix" user={this.state.user} icon={(focused) => icon({focused, type: 'search'})} renderBackButton={()=>(null)} renderLeftButton={()=>(null)} />
+                        <Scene key="InvestAdviceList" component={InvestAdviceList} type={ActionConst.REPLACE}  title="Elige el mix" user={this.state.user} icon={(focused) => icon({focused, type: 'search'})} renderBackButton={()=>(null)} renderLeftButton={()=>(null)} />
                         <Scene key="Home" component={Home} title="Perfil"  type={ActionConst.REPLACE} icon={(focused) => icon({focused, type: 'contact'})} hideNavBar />
                         <Scene key="ChangePass" component={ChangePw} title="Cambiar contraseña"/>
                         <Scene key="Detail" component={Detail} title="Composición del mix"  user={this.state.user} />

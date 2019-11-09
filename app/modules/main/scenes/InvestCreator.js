@@ -1,14 +1,15 @@
 import React from 'react';
 
-var {View, StyleSheet, Share} = require('react-native');
+var {View, StyleSheet, Share, Alert, AsyncStorage, Image} = require('react-native');
 
 import {connect} from 'react-redux';
 
 import StepIndicator from 'react-native-step-indicator';
-import {FormLabel, Button, Text, FormInput, List, ListItem} from 'react-native-elements'
+import {FormLabel, Button, Text, FormInput, List, ListItem, Badge} from 'react-native-elements'
 import DatePicker from 'react-native-datepicker'
 import LottieView from 'lottie-react-native';
 import {Actions} from 'react-native-router-flux';
+import Onboarding from 'react-native-onboarding-swiper';
 import {Feather, MaterialCommunityIcons} from '@expo/vector-icons';
 import {AppFontLoader} from '../../AppFontLoader';
 import Splash from '../../splash/Splash';
@@ -33,6 +34,8 @@ const profileRisksList = [
     {
         name: 'Conservador',
         avatar_url: 'https://s3.amazonaws.com/uifaces/faces/twitter/ladylexy/128.jpg',
+        onPressRightIcon: () => Alert.alert('Conservador', 'Se caracteriza por buscar inversiones que representen un crecimiento moderado, sin asumir riesgos importantes, priorizando tener una disponibilidad inmediata de sus inversiones y buscando minimizar la incidencia de las fluctuaciones del mercado.'),
+        rightIcon: {name: 'info-outline', color: '#20b382'},
         leftIcon: (<Feather
             name={'arrow-down'}
             color={'green'}
@@ -45,6 +48,8 @@ const profileRisksList = [
     {
         name: 'Moderado',
         avatar_url: 'https://s3.amazonaws.com/uifaces/faces/twitter/adhamdannaway/128.jpg',
+        onPressRightIcon: () => Alert.alert('Moderado', 'Se encuentra dispuesto a asumir ciertas oscilaciones en sus inversiones, esperando que en un mediano / largo plazo pueda obtener una mayor rentabilidad. Es un perfil intermedio, tratándose de personas que pueden tolerar cierto riesgo en sus inversiones, a cambio de una mayor rentabilidad.'),
+        rightIcon: {name: 'info-outline', color: '#20b382'},
         leftIcon: (<MaterialCommunityIcons
             name={'equal'}
             color={'gray'}
@@ -57,6 +62,8 @@ const profileRisksList = [
     {
         name: 'Agresivo',
         avatar_url: 'https://s3.amazonaws.com/uifaces/faces/twitter/adhamdannaway/128.jpg',
+        onPressRightIcon: () => Alert.alert('Agresivo', 'Se caracteriza por inversores cuyo objetivo principal es maximizar el rendimiento de su cartera, asumiendo para ello un alto componente de riesgo. Están dispuestos a mantener sus inversiones por períodos largos, sin asignarle una alta prioridad a la disponibilidad inmediata de sus activos, y a asumir pérdidas de capital.'),
+        rightIcon: {name: 'info-outline', color: '#20b382'},
         leftIcon: (<Feather
             name={'arrow-up'}
             style={{justifyContent: 'center', alignItems: 'center', marginTop: 10}}
@@ -85,19 +92,69 @@ class MatchCreator extends React.Component {
             preferSay: true,
             haveInvest: false,
             isReady: props.plan && Object.entries(props.plan).length > 0,
+            showOnboarding: false,
         }
     }
 
     componentDidMount() {
+        // AsyncStorage.clear();
+        AsyncStorage.getItem('onboarding', (err, result) => {
+            if (err) {
+            } else {
+                if (result == null) {
+                    console.log("null value recieved", result);
+                    this.setOnboardingVisible(true);
+                } else {
+                    console.log("result", result);
+                }
+            }
+        });
+        AsyncStorage.setItem('onboarding', JSON.stringify({"value": "true"}), (err, result) => {
+            console.log("error", err, "result", result);
+        });
+
         if (this.props.plan && Object.entries(this.props.plan).length === 0) {
             this.props.user && this.props.user.uid && this.props.getPlanByUserId(this.props.user.uid, () => this.setState({isReady: true}));
         }
     }
 
+    setOnboardingVisible(visible) {
+        this.setState({showOnboarding: visible});
+    }
+
+    renderOnboarding() {
+        return (<Onboarding
+            onDone={() => this.setOnboardingVisible(false)}
+            nextLabel="Siguiente"
+            skipLabel="Saltar"
+            onSkip={() => this.setOnboardingVisible(false)}
+            pages={[
+                {
+                    backgroundColor: '#20b382',
+                    image: <Image source={require('./assets/HomeScreen.png')}/>,
+                    title: 'Crea tu perfil',
+                    subtitle: 'Carga los datos y defini tu objetivo, nosotros nos encargamos del resto. $$$',
+                },
+                {
+                    backgroundColor: '#fe6e58',
+                    image: <Image source={require('./assets/HomeScreen.png')}/>,
+                    title: 'Mix',
+                    subtitle: 'Elegi el mix que se adapte a tus necesidades.',
+                },
+                {
+                    backgroundColor: '#999',
+                    image: <Image source={require('./assets/HomeScreen.png')}/>,
+                    title: '¡Listo!',
+                    subtitle: 'A partir de este momento podes darle seguimiento para lograr tu objetivo',
+                }
+            ]}
+        />)
+    }
+
 
     componentWillReceiveProps(nextProps) {
         if (nextProps.plan && Object.entries(nextProps.plan).length === 0) {
-            nextProps.user &&  nextProps.user.uid && nextProps.getPlanByUserId(nextProps.user.uid, () => this.setState({isReady: true}));
+            nextProps.user && nextProps.user.uid && nextProps.getPlanByUserId(nextProps.user.uid, () => this.setState({isReady: true}));
         } else {
             const {entry, cost, profitSave, risk, goal, dtSince, dtGoal, desc, advice} = nextProps.plan;
             Actions.Home({
@@ -222,7 +279,7 @@ class MatchCreator extends React.Component {
             return <Home {...homeProps} />;
         }
 
-        // if (!this.state.isReady) return <Splash/>
+        if (this.state.showOnboarding) return this.renderOnboarding();
 
         return (
             <AppFontLoader>
@@ -250,7 +307,7 @@ class MatchCreator extends React.Component {
                                             autoCapitalize='none'
                                             clearButtonMode='while-editing'
                                             underlineColorAndroid={"#ccc"}
-                                            placeholder={"$ 10000"}
+                                            placeholder={"(ARS) $10000"}
                                             placeholderTextColor={"#E3E3E3"}
                                             autoFocus={false}
                                             onChangeText={(entry) => this.setState({entry})}
@@ -260,19 +317,15 @@ class MatchCreator extends React.Component {
                                         <Feather
                                             name={'arrow-right-circle'}
                                             disabled={this.state.entry === ''}
-                                            color={this.state.entry === '' ? '#E3E3E3' : '#666666'}
+                                            color={this.state.entry === '' ? '#E3E3E3' : '#20b382'}
                                             size={42}
                                             onPress={() => this.onSubmit(1)}
                                         />
                                     </View>
                                     <View style={{marginTop: 45}}>
-                                        <Button
-                                            raised
-                                            title={'Prefiero no decirlo'}
-                                            borderRadius={4}  //optional
-                                            backgroundColor={"#20b382"} //optional
-                                            containerViewStyle={styles.buttonContainer} //optional
-                                            onPress={() => this.setState({preferSay: false})}/>
+                                        <Badge containerStyle={styles.badgePreferNot}
+                                               onPress={() => this.setState({preferSay: false})}
+                                               value="Prefiero no decirlo"/>
                                         <Text style={{
                                             textAlign: "center",
                                             color: '#858b89',
@@ -291,7 +344,7 @@ class MatchCreator extends React.Component {
                                             autoCapitalize='none'
                                             clearButtonMode='while-editing'
                                             underlineColorAndroid={"#ccc"}
-                                            placeholder={"$ 10000"}
+                                            placeholder={"(ARS) $10000"}
                                             placeholderTextColor={"#E3E3E3"}
                                             autoFocus={true}
                                             onChangeText={(profitSave) => this.setState({profitSave})}
@@ -301,7 +354,7 @@ class MatchCreator extends React.Component {
                                         <Feather
                                             name={'arrow-right-circle'}
                                             disabled={this.state.profitSave === ''}
-                                            color={this.state.profitSave === '' ? '#E3E3E3' : '#666666'}
+                                            color={this.state.profitSave === '' ? '#E3E3E3' : '#20b382'}
                                             size={42}
                                             onPress={() => this.onSubmit(2)}
                                         />
@@ -325,7 +378,7 @@ class MatchCreator extends React.Component {
                                             autoCapitalize='none'
                                             clearButtonMode='while-editing'
                                             underlineColorAndroid={"#ccc"}
-                                            placeholder={"$ 3000"}
+                                            placeholder={"(ARS) $3000"}
                                             placeholderTextColor={"#E3E3E3"}
                                             autoFocus={true}
                                             onChangeText={(cost) => this.setState({cost})}
@@ -335,7 +388,7 @@ class MatchCreator extends React.Component {
                                         <Feather
                                             name={'arrow-right-circle'}
                                             disabled={this.state.cost === ''}
-                                            color={this.state.cost === '' ? '#E3E3E3' : '#666666'}
+                                            color={this.state.cost === '' ? '#E3E3E3' : '#20b382'}
                                             size={42}
                                             onPress={() => this.onSubmit(2)}
                                         />
@@ -359,6 +412,8 @@ class MatchCreator extends React.Component {
                                             onPress={() => {
                                                 this.setState({risk: l.key}, () => this.onSubmit(3));
                                             }}
+                                            onPressRightIcon={l.onPressRightIcon}
+                                            rightIcon={l.rightIcon}
                                             leftIcon={l.leftIcon}
                                             key={l.key}
                                             title={l.name}
@@ -384,7 +439,7 @@ class MatchCreator extends React.Component {
                                             autoCapitalize='none'
                                             clearButtonMode='while-editing'
                                             underlineColorAndroid={"#ccc"}
-                                            placeholder={"$ 7000"}
+                                            placeholder={"(ARS) $7000"}
                                             placeholderTextColor={"#E3E3E3"}
                                             autoFocus={true}
                                             onChangeText={(goal) => this.setState({goal})}
@@ -414,7 +469,7 @@ class MatchCreator extends React.Component {
                                             <Feather
                                                 name={'arrow-right-circle'}
                                                 disabled={this.state.goal === ''}
-                                                color={this.state.goal === '' ? '#E3E3E3' : '#666666'}
+                                                color={this.state.goal === '' ? '#E3E3E3' : '#20b382'}
                                                 size={42}
                                                 onPress={() => this.onSubmit(4)}
                                             />
@@ -423,8 +478,8 @@ class MatchCreator extends React.Component {
                                 </View>
                             </View>
                         </View>
-
                     }
+
                     {
                         this.state.currentPosition === 4 &&
                         <View style={styles.container}>
@@ -460,7 +515,7 @@ class MatchCreator extends React.Component {
                                     <Feather
                                         name={'arrow-right-circle'}
                                         disabled={this.state.datetime === undefined}
-                                        color={this.state.datetime === undefined ? '#E3E3E3' : '#666666'}
+                                        color={this.state.datetime === undefined ? '#E3E3E3' : '#20b382'}
                                         size={42}
                                         onPress={() => this.onSubmit(5)}
                                     />
@@ -563,9 +618,15 @@ const styles = StyleSheet.create({
     },
     inputContainer: {
         width: misc.window_width - 130,
-        fontSize: 35,
+        fontSize: 32,
         padding: 10,
     },
+    badgePreferNot: {
+        width: "50%",
+        backgroundColor: '#aaaaaa',
+        left: (misc.window_width * 0.2),
+    },
+
 });
 
 

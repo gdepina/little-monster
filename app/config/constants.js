@@ -10,4 +10,4 @@ export const FIREBASE_MESSAGING_SENDER_ID = "11686507066";
 export const FACEBOOK_APP_ID = '1130450777103073';
 
 export const API_URL = 'https://little-monster-backend.herokuapp.com/apiMonster/';
-export const BACK_API_URL = 'http://investment-api.herokuapp.com/moneyfit/api/v1/investments';
+export const BACK_API_URL = 'http://investment-api.herokuapp.com/moneyfit/api/v1/investmentss';

@@ -79,7 +79,7 @@ class Home extends React.Component {
                 }}
                 // source={require('./background.jpg')}
             >
-                <View style={styles.container}>
+                <ScrollView style={styles.container}>
                     <View style={styles.topBar}>
                         <Text style={styles.title}>{`Plan de Ahorro de ${this.props.user && this.props.user.displayName }`}</Text>
                         <OptionsMenu
@@ -152,7 +152,7 @@ class Home extends React.Component {
                             </Card>
                         </View>
                     </View>
-                </View>
+                </ScrollView>
             </ImageBackground>
         );
     }

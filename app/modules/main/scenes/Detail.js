@@ -35,9 +35,9 @@ class MoviePoster extends Component {
 
     onSubmit() {
         const {entry, cost, savings, risk, goal, initialDate, goalDate, desc, createInvest, user, advice, period} = this.props;
-        this.setState({ disabled: true }, () => {
+        this.setState({disabled: true}, () => {
             createInvest(user.uid, entry, cost, savings, risk, goal, initialDate, goalDate, desc, advice);
-            Actions.Home({ entry, cost, savings, risk, goal, initialDate, goalDate, desc, advice, period});
+            Actions.Home({entry, cost, savings, risk, goal, initialDate, goalDate, desc, advice, period});
         })
 
     }
@@ -51,29 +51,36 @@ class MoviePoster extends Component {
         const dayTranslation = {
             day: 'días',
         }
-        const {investmentType, expectedProfit, risk, term, period} = item;
+        const {stockName, effectiveProfit, risk, period, investmentAmount, tna} = item;
 
         const translatedRisk = profileRiskTranslations[risk.toLowerCase()];
-        const translatedDatetime = dayTranslation[period.toLowerCase()];
+
         return (<View>
             <View>
-                <FormLabel>{`Rendimiento - ${investmentType}: `} <Text style={styles.planItem}
-                                                                       h5>{expectedProfit}</Text></FormLabel>
+                <FormLabel labelStyle={{ fontSize: 14, fontWeight: 'normal' }}>{'Invierte '} <Text style={{...styles.planItem, fontSize: 14}}
+                                                          h5>{`$ ${investmentAmount.toFixed(2)}`}</Text> {' gana '}
+                    <Text style={{...styles.planItem, color:'#20b382', fontSize: 14,}}
+                          h5>{`$ ${effectiveProfit.toFixed(2)}.`}</Text>
+                </FormLabel>
             </View>
             <View>
-                <FormLabel>{'Riesgo: '} <Text style={styles.planItem} h5>{translatedRisk}</Text></FormLabel>
+                <FormLabel labelStyle={{ fontWeight: 'normal' }}>{'Riesgo: '} <Text style={styles.softItem} h5>{translatedRisk}</Text></FormLabel>
             </View>
             <View>
-                <FormLabel>{'Duración: '} <Text style={styles.planItem}
-                                                h5>{`${term} ${translatedDatetime}`}</Text></FormLabel>
+                <FormLabel labelStyle={{ fontWeight: 'normal' }}>{'Periodo: '} <Text style={styles.softItem}
+                                               h5>{`${period} días`}</Text></FormLabel>
+            </View>
+            <View>
+                <FormLabel labelStyle={{ fontWeight: 'normal' }}>{'TNA: '} <Text style={styles.softItem}
+                                                                                     h5>{`${tna}%`}</Text></FormLabel>
             </View>
         </View>)
     }
 
     getRenderItem() {
         return ({item, index}) => {
-            const {investmentType} = item;
-            return (<Card title={`#${index + 1} ${investmentType}`}>
+            const {investmentType, stockName} = item;
+            return (<Card title={`#${index + 1} ${investmentType} - ${stockName} `}>
                 {this.renderBody(item)}
             </Card>)
 
@@ -94,7 +101,7 @@ class MoviePoster extends Component {
                             renderItem={this.getRenderItem()}
                             keyExtractor={item => item.id}
                         />
-                        { this.props.showButton && <Button
+                        {this.props.showButton && <Button
                             raised
                             title={'Elegir'}
                             borderRadius={4}  //optional
@@ -177,6 +184,10 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         color: '#000',
     },
+    softItem: {
+        fontWeight: 'normal',
+        color: '#000',
+    },
     buttonContainer: {
         marginVertical: padding * 2,
         marginHorizontal: 0
@@ -190,6 +201,6 @@ function mapStateToProps(state, props) {
     }
 }
 
-export default connect(mapStateToProps, {createInvest })(MoviePoster);
+export default connect(mapStateToProps, {createInvest})(MoviePoster);
 
 
