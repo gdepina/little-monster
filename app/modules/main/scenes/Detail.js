@@ -7,10 +7,11 @@ import {
     ScrollView,
     Text,
     FlatList,
+    Alert
 } from "react-native";
 import {ListItem, FormInput, FormLabel, Card, List, Button} from 'react-native-elements';
 import {actions} from "../"
-import {MaterialIcons, Foundation, Feather} from '@expo/vector-icons';
+import {Feather, MaterialCommunityIcons, MaterialIcons} from '@expo/vector-icons';
 
 import Colors from "../../../config/Colors";
 import * as Theme from "../../../styles/Theme";
@@ -51,28 +52,37 @@ class MoviePoster extends Component {
         const dayTranslation = {
             day: 'días',
         }
-        const {stockName, effectiveProfit, risk, period, investmentAmount, tna} = item;
+        const {stockName, effectiveProfit, risk, period, investmentAmount, tna, description} = item;
 
         const translatedRisk = profileRiskTranslations[risk.toLowerCase()];
 
         return (<View>
             <View>
-                <FormLabel labelStyle={{ fontSize: 14, fontWeight: 'normal' }}>{'Invierte '} <Text style={{...styles.planItem, fontSize: 14}}
-                                                          h5>{`$ ${investmentAmount.toFixed(2)}`}</Text> {' gana '}
-                    <Text style={{...styles.planItem, color:'#20b382', fontSize: 14,}}
+                <FormLabel labelStyle={{fontSize: 14, fontWeight: 'normal'}}>{'Invierte '} <Text
+                    style={{...styles.planItem, fontSize: 14}}
+                    h5>{`$ ${investmentAmount.toFixed(2)}`}</Text> {' gana '}
+                    <Text style={{...styles.planItem, color: '#20b382', fontSize: 14,}}
                           h5>{`$ ${effectiveProfit.toFixed(2)}.`}</Text>
                 </FormLabel>
             </View>
             <View>
-                <FormLabel labelStyle={{ fontWeight: 'normal' }}>{'Riesgo: '} <Text style={styles.softItem} h5>{translatedRisk}</Text></FormLabel>
+                <FormLabel labelStyle={{fontWeight: 'normal'}}>{'Riesgo: '} <Text style={styles.softItem}
+                                                                                  h5>{translatedRisk}</Text></FormLabel>
             </View>
             <View>
-                <FormLabel labelStyle={{ fontWeight: 'normal' }}>{'Periodo: '} <Text style={styles.softItem}
-                                               h5>{`${period} días`}</Text></FormLabel>
+                <FormLabel labelStyle={{fontWeight: 'normal'}}>{'Periodo: '} <Text style={styles.softItem}
+                                                                                   h5>{`${period} días`}</Text></FormLabel>
             </View>
             <View>
-                <FormLabel labelStyle={{ fontWeight: 'normal' }}>{'TNA: '} <Text style={styles.softItem}
-                                                                                     h5>{`${tna}%`}</Text></FormLabel>
+                <FormLabel labelStyle={{fontWeight: 'normal'}}>{'TNA: '} <Text style={styles.softItem}
+                                                                               h5>{`${tna}%`}</Text></FormLabel>
+            </View>
+            <View>
+
+                <FormLabel labelStyle={{fontWeight: 'normal'}}>
+                    {description && <Text style={{...styles.softItem, color: 'blue', fontSize: 14}}
+                                          onPress={() => Alert.alert(stockName, description)}
+                                          h5>{`+ Info`}</Text>}</FormLabel>
             </View>
         </View>)
     }
@@ -80,7 +90,7 @@ class MoviePoster extends Component {
     getRenderItem() {
         return ({item, index}) => {
             const {investmentType, stockName} = item;
-            return (<Card title={`#${index + 1} ${investmentType} - ${stockName} `}>
+            return (<Card title={`#${index + 1} ${investmentType} - ${stockName}`}>
                 {this.renderBody(item)}
             </Card>)
 
