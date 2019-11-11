@@ -67,10 +67,17 @@ class Home extends React.Component {
         return new Date(Date.UTC(year, month - 1, day));
     }
 
+    addDays(date, days) {
+        date.setDate(date.getDate() + days);
+        return date;
+    }
+
     render() {
         const {entry, cost, savings, risk, goal, initialDate, goalDate, desc, advice} = this.props;
         const period = Math.max(...advice.map(o => o.period), 0);
-        const diffFromNow = this.dateDiffInDays(new Date(), this.stringToDateTiem(goalDate));
+
+        const calculatedGoalDate = this.addDays(this.stringToDateTiem(initialDate), period);
+        const diffFromNow = this.dateDiffInDays(new Date(), this.stringToDateTiem(calculatedGoalDate));
         // const period = this.dateDiffInDays(this.stringToDateTiem(initialDate), this.stringToDateTiem(goalDate));
         const profit = advice.reduce((acc, obj) => acc + obj.effectiveProfit, 0);
         const investment = advice.reduce((acc, obj) => acc + obj.investmentAmount, 0);
@@ -133,7 +140,7 @@ class Home extends React.Component {
                         <Badge
                             containerStyle={{ marginTop: 12, marginRight: 15, backgroundColor: '#20b382'}}
                             textStyle={{ fontSize: 16}}
-                            value={`$ ${profit.toFixed(2)}`}
+                            value={`+ $ ${profit.toFixed(2)}`}
                         />
                     </View>
                     <Divider style={{height: 1, backgroundColor: '#e1e8ee'}}/>
@@ -154,7 +161,7 @@ class Home extends React.Component {
                                 onPress={() => Actions.Detail({advice, showButton: false})}
                                 title='Ver'/>
                         </Card>
-                        <Card containerStyle={styles.card} title={`Plan ${this.profileRisk[risk]}`}
+                        <Card containerStyle={{...styles.card, marginBottom: 40}} title={`Plan ${this.profileRisk[risk]}`}
                               titleStyle={{fontSize: 15, color: '#20b382'}}>
                             <View>
                                 <FormLabel>{`Objetivo: `} <Text style={styles.planItem}

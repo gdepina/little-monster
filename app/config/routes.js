@@ -1,6 +1,6 @@
 import React from 'react';
 import {Scene, Router, ActionConst, Stack} from 'react-native-router-flux';
-const { StyleSheet, Platform } = require('react-native');
+const { StyleSheet, Platform, StatusBar } = require('react-native');
 
 import Splash from '../modules/splash/Splash';
 import Home from '../modules/main/scenes/Home';
@@ -79,7 +79,7 @@ class Routes extends React.Component {
                     {/*</Stack>*/}
 
                     <Stack key="Main" initial={this.state.isLoggedIn}>
-                        <Scene key="Explore" component={InvestCreator} title="Comenzemos"  initial={true} user={this.state.user} icon={(focused) => icon({focused, type: 'podium'})} hideNavBar />
+                        <Scene key="Explore" component={InvestCreator} title="Comenzemos"  initial={true} user={this.state.user} icon={(focused) => icon({focused, type: 'podium'})} statusBarStyle="light-content" hideNavBar />
                         <Scene key="InvestAdviceList" component={InvestAdviceList} type={ActionConst.REPLACE}  title="Elige el mix" user={this.state.user} icon={(focused) => icon({focused, type: 'search'})} renderBackButton={()=>(null)} renderLeftButton={()=>(null)} />
                         <Scene key="Home" component={Home} title="Perfil"  type={ActionConst.REPLACE} icon={(focused) => icon({focused, type: 'contact'})} hideNavBar />
                         <Scene key="ChangePass" component={ChangePw} title="Cambiar contraseña"/>

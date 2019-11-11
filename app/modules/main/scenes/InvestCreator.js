@@ -10,13 +10,19 @@ import DatePicker from 'react-native-datepicker'
 import LottieView from 'lottie-react-native';
 import {Actions} from 'react-native-router-flux';
 import Onboarding from 'react-native-onboarding-swiper';
-import {Feather, MaterialCommunityIcons} from '@expo/vector-icons';
+import {Feather, MaterialCommunityIcons, MaterialIcons} from '@expo/vector-icons';
 import {AppFontLoader} from '../../AppFontLoader';
 import Splash from '../../splash/Splash';
 import Home from './Home';
+import {TextInputMask} from 'react-native-masked-text'
+import MonthSelectorCalendar from 'react-native-month-selector';
+import Spinner from 'react-native-loading-spinner-overlay';
+
+const moment = require('moment');
 
 
 import {actions} from "../"
+import * as api from '../api';
 import * as Theme from "../../../styles/Theme";
 
 const {padding} = Theme;
@@ -25,6 +31,8 @@ const congrats = require('./assets/congrats.json');
 
 import {misc} from "../../../styles/Theme"
 import Colors from "../../../config/Colors";
+import AccordionView from "../components/Accordion";
+import actionType from "../actionTypes";
 
 const device_width = misc.window_width;
 const {getPlan, getPlanByUserId} = actions;
@@ -89,10 +97,14 @@ class MatchCreator extends React.Component {
             desc: '',
             profitSave: '',
             risk: '',
+            profitSaveRaw: 0,
+            goalRaw: 0,
             preferSay: true,
             haveInvest: false,
             isReady: props.plan && Object.entries(props.plan).length > 0,
             showOnboarding: false,
+            month: moment().add(1, 'month'),
+            spinner: false,
         }
     }
 
@@ -133,7 +145,7 @@ class MatchCreator extends React.Component {
                     backgroundColor: '#20b382',
                     image: <Image source={require('./assets/HomeScreen.png')}/>,
                     title: 'Crea tu perfil',
-                    subtitle: 'Carga los datos y defini tu objetivo, nosotros nos encargamos del resto. $$$',
+                    subtitle: 'Buscaremos la forma mas rapida para que cumplas tu objetivo de ahorro, solo necesitamos ingreses los datos y te aconsejaremos.',
                 },
                 {
                     backgroundColor: '#fe6e58',
@@ -194,48 +206,81 @@ class MatchCreator extends React.Component {
     }
 
     onPressIndicator(position) {
-        if (this.state.currentPosition > position && this.state.currentPosition !== 5) {
+        if (this.state.currentPosition > position && this.state.currentPosition !== 4) {
             this.setState({
                 currentPosition: position,
             });
         }
     }
 
-    onSubmit(step) {
-        this.setState({
-            currentPosition: step,
-        }, () => {
-            // this.animation && this.animation.play();
-            if (step === 5) {
-                const {profitSave, entry, cost, risk, goal, datetime, desc} = this.state;
-                const initialDate = new Date();
-                const goalDate = new Date(datetime);
+    getPlanDate(options, cb, errorCb) {
+        api.getPlan(options)
+            .then(res => {
+                // cb();
+                // const maxPeriod = Math.max(...item.map(o => o.period), 0);
+                cb(Math.max(...res[0].map(o => o.period), 0));
+            })
+            .catch(error => {
+                errorCb()
+            })
+    }
 
-                const savings = profitSave || Math.abs(entry - cost);
-                const period = this.dateDiffInDays(initialDate, goalDate);
-                this.props.getPlan({
+    onSubmit(step) {
+        if (step === 3) {
+            const {profitSaveRaw, entry, cost, risk, goalRaw} = this.state;
+
+            const savings = profitSaveRaw || Math.abs(entry - cost);
+
+            this.setState({spinner: true}, () =>
+                this.getPlanDate({
                     savings,
-                    objective: goal,
+                    objective: goalRaw,
                     risk,
-                    period,
-                }, () => Actions.InvestAdviceList({
-                    entry,
-                    cost,
-                    savings,
-                    risk,
-                    goal,
-                    period,
-                    initialDate,
-                    goalDate,
-                    desc
-                }))
-            }
-        });
+                    period: 30,
+                }, (days) => this.setState({
+                    suggestedDays: days,
+                    spinner: false,
+                    currentPosition: step
+                }), () => this.setState({spinner: false, preferSay: false, currentPosition: step}))
+            );
+        } else {
+            this.setState({
+                currentPosition: step,
+            }, () => {
+                // this.animation && this.animation.play();
+
+                if (step === 4) {
+                    const {profitSaveRaw, entry, cost, risk, goalRaw, month, desc} = this.state;
+                    const initialDate = new Date();
+                    const goalDate = new Date(month.format('MM-DD-YYYY'));
+
+                    const savings = profitSaveRaw || Math.abs(entry - cost);
+                    const period = this.dateDiffInDays(initialDate, goalDate);
+
+                    this.setState({spinner: true}, () => this.props.getPlan({
+                        savings,
+                        objective: goalRaw,
+                        risk,
+                        period,
+                    }, () => Actions.InvestAdviceList({
+                        entry,
+                        cost,
+                        savings,
+                        risk,
+                        goal: goalRaw,
+                        period,
+                        initialDate,
+                        goalDate,
+                        desc
+                    })))
+                }
+            });
+        }
     }
 
 
     render() {
-        const labels = ["Ingresos", "Gastos", "Perfil", "Objetivo", "Tiempo"];
+        const labels = ["Inversión", "Perfil", "Objetivo", "Tiempo"];
         const customStyles = {
             stepIndicatorSize: 25,
             currentStepIndicatorSize: 30,
@@ -283,13 +328,17 @@ class MatchCreator extends React.Component {
 
         return (
             <AppFontLoader>
+                <Spinner
+                    visible={this.state.spinner}
+                    color={'#20b382'}
+                    textStyle={{color: '#20b382'}}/>
                 <View style={styles.container}>
                     <View style={{marginVertical: 40}}>
                         <StepIndicator
                             customStyles={customStyles}
                             currentPosition={this.state.currentPosition}
                             labels={labels}
-                            stepCount={5}
+                            stepCount={4}
                             onPress={this.onPressIndicator}
                         />
                     </View>
@@ -297,76 +346,115 @@ class MatchCreator extends React.Component {
                         this.state.currentPosition === 0 &&
                         <View style={styles.container}>
                             <View style={styles.container_step_1}>
-                                {this.state.preferSay &&
+                                {/*{this.state.preferSay &&*/}
+                                {/*<View style={{...styles.row, marginTop: misc.window_height * 0.1}}>*/}
+                                {/*<FormLabel labelStyle={styles.formLabel}*/}
+                                {/*containerStyle={styles.formLabelContainer}>{"¿Cuál es su ingreso mensual?"}</FormLabel>*/}
+                                {/*<View*/}
+                                {/*style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>*/}
+                                {/*<FormInput*/}
+                                {/*autoCapitalize='none'*/}
+                                {/*clearButtonMode='while-editing'*/}
+                                {/*underlineColorAndroid={"#ccc"}*/}
+                                {/*placeholder={"(ARS) $10000"}*/}
+                                {/*placeholderTextColor={"#E3E3E3"}*/}
+                                {/*autoFocus={false}*/}
+                                {/*onChangeText={(entry) => this.setState({entry})}*/}
+                                {/*inputStyle={styles.inputContainer}*/}
+                                {/*keyboardType={'numeric'}*/}
+                                {/*value={this.state.entry}/>*/}
+                                {/*<Feather*/}
+                                {/*name={'arrow-right-circle'}*/}
+                                {/*disabled={this.state.entry === ''}*/}
+                                {/*color={this.state.entry === '' ? '#E3E3E3' : '#20b382'}*/}
+                                {/*size={42}*/}
+                                {/*onPress={() => this.onSubmit(1)}*/}
+                                {/*/>*/}
+                                {/*</View>*/}
+                                {/*<View style={{marginTop: 45}}>*/}
+                                {/*<Badge containerStyle={styles.badgePreferNot}*/}
+                                {/*onPress={() => this.setState({preferSay: false})}*/}
+                                {/*value="Prefiero no decirlo"/>*/}
+                                {/*<Text style={{*/}
+                                {/*textAlign: "center",*/}
+                                {/*color: '#858b89',*/}
+                                {/*marginTop: 30*/}
+                                {/*}}> {"Tenga en cuenta que una vez creado su perfil podrá modificar los datos."} </Text>*/}
+                                {/*</View>*/}
+                                {/*</View>*/}
+                                {/*}*/}
                                 <View style={{...styles.row, marginTop: misc.window_height * 0.1}}>
                                     <FormLabel labelStyle={styles.formLabel}
-                                               containerStyle={styles.formLabelContainer}>{"¿Cuál es su ingreso mensual?"}</FormLabel>
+                                               containerStyle={styles.formLabelContainer}>{"¿Cuanto te gustaria invertir?"}</FormLabel>
                                     <View
                                         style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
-                                        <FormInput
+                                        <TextInputMask
+                                            type={'money'}
+                                            options={{
+                                                precision: 0,
+                                                separator: ',',
+                                                delimiter: '.',
+                                                unit: 'ARS $',
+                                                suffixUnit: ''
+                                            }}
+                                            style={styles.inputContainer}
+                                            value={this.state.profitSave}
                                             autoCapitalize='none'
                                             clearButtonMode='while-editing'
                                             underlineColorAndroid={"#ccc"}
-                                            placeholder={"(ARS) $10000"}
+                                            placeholder={"ARS $1.500"}
                                             placeholderTextColor={"#E3E3E3"}
-                                            autoFocus={false}
-                                            onChangeText={(entry) => this.setState({entry})}
-                                            inputStyle={styles.inputContainer}
-                                            keyboardType={'numeric'}
-                                            value={this.state.entry}/>
+                                            autoFocus={true}
+                                            includeRawValueInChangeText={true}
+                                            onChangeText={(maskedText, rawText) => {
+                                                this.setState({
+                                                    profitSave: maskedText,
+                                                    profitSaveRaw: rawText
+                                                })
+                                            }}
+                                        />
+                                        {/*<FormInput*/}
+                                        {/*autoCapitalize='none'*/}
+                                        {/*clearButtonMode='while-editing'*/}
+                                        {/*underlineColorAndroid={"#ccc"}*/}
+                                        {/*placeholder={"(ARS) $10000"}*/}
+                                        {/*placeholderTextColor={"#E3E3E3"}*/}
+                                        {/*autoFocus={true}*/}
+                                        {/*onChangeText={(profitSave) => this.setState({profitSave})}*/}
+                                        {/*inputStyle={styles.inputContainer}*/}
+                                        {/*keyboardType={'numeric'}*/}
+                                        {/*value={this.state.profitSave}/>*/}
                                         <Feather
                                             name={'arrow-right-circle'}
-                                            disabled={this.state.entry === ''}
-                                            color={this.state.entry === '' ? '#E3E3E3' : '#20b382'}
+                                            disabled={this.state.profitSaveRaw <= 1499}
+                                            color={this.state.profitSaveRaw <= 1499 ? '#E3E3E3' : '#20b382'}
                                             size={42}
                                             onPress={() => this.onSubmit(1)}
                                         />
                                     </View>
-                                    <View style={{marginTop: 45}}>
-                                        <Badge containerStyle={styles.badgePreferNot}
-                                               onPress={() => this.setState({preferSay: false})}
-                                               value="Prefiero no decirlo"/>
+                                    <View style={{marginTop: 20}}>
+                                        {/*<Badge containerStyle={styles.badgePreferNot}*/}
+                                        {/*onPress={() => this.setState({preferSay: false})}*/}
+                                        {/*value="Prefiero no decirlo"/>*/}
                                         <Text style={{
                                             textAlign: "center",
                                             color: '#858b89',
-                                            marginTop: 30
-                                        }}> {"Tenga en cuenta que una vez creado su perfil podrá modificar los datos."} </Text>
+                                            marginTop: 15,
+                                            fontSize: 18,
+                                        }}> {"Inversión minima ARS $1500."} </Text>
+                                        <Text style={{
+                                            textAlign: "center",
+                                            color: '#858b89',
+                                            marginTop: 15
+                                        }}> {"Una vez creado el plan podrá modificar los datos."} </Text>
                                     </View>
                                 </View>
-                                }
-                                {!this.state.preferSay &&
-                                <View style={{...styles.row, marginTop: misc.window_height * 0.1}}>
-                                    <FormLabel labelStyle={styles.formLabel}
-                                               containerStyle={styles.formLabelContainer}>{"Ingrese diferencia entre sus ingresos y egresos"}</FormLabel>
-                                    <View
-                                        style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
-                                        <FormInput
-                                            autoCapitalize='none'
-                                            clearButtonMode='while-editing'
-                                            underlineColorAndroid={"#ccc"}
-                                            placeholder={"(ARS) $10000"}
-                                            placeholderTextColor={"#E3E3E3"}
-                                            autoFocus={true}
-                                            onChangeText={(profitSave) => this.setState({profitSave})}
-                                            inputStyle={styles.inputContainer}
-                                            keyboardType={'numeric'}
-                                            value={this.state.profitSave}/>
-                                        <Feather
-                                            name={'arrow-right-circle'}
-                                            disabled={this.state.profitSave === ''}
-                                            color={this.state.profitSave === '' ? '#E3E3E3' : '#20b382'}
-                                            size={42}
-                                            onPress={() => this.onSubmit(2)}
-                                        />
-                                    </View>
-                                </View>
-                                }
                             </View>
                         </View>
 
                     }
                     {
-                        this.state.currentPosition === 1 &&
+                        this.state.currentPosition === 10 &&
                         <View style={styles.container}>
                             <View style={styles.container_step_1}>
                                 <View style={{...styles.row, marginTop: misc.window_height * 0.1}}>
@@ -399,7 +487,7 @@ class MatchCreator extends React.Component {
 
                     }
                     {
-                        this.state.currentPosition === 2 &&
+                        this.state.currentPosition === 1 &&
                         <View>
                             <List containerStyle={{marginBottom: 20}}>
                                 {
@@ -410,7 +498,7 @@ class MatchCreator extends React.Component {
                                             subtitleStyle={{marginLeft: 20}}
                                             // avatar={{uri: l.avatar_url}}
                                             onPress={() => {
-                                                this.setState({risk: l.key}, () => this.onSubmit(3));
+                                                this.setState({risk: l.key}, () => this.onSubmit(2));
                                             }}
                                             onPressRightIcon={l.onPressRightIcon}
                                             rightIcon={l.rightIcon}
@@ -425,7 +513,7 @@ class MatchCreator extends React.Component {
                         </View>
                     }
                     {
-                        this.state.currentPosition === 3 &&
+                        this.state.currentPosition === 2 &&
                         <View style={styles.container}>
                             <View style={styles.container_step_1}>
                                 <View style={{...styles.row, marginTop: misc.window_height * 0.1}}>
@@ -435,21 +523,31 @@ class MatchCreator extends React.Component {
                                         alignItems: 'center',
                                         justifyContent: 'center'
                                     }}>
-                                        <FormInput
+                                        <TextInputMask
+                                            type={'money'}
+                                            options={{
+                                                precision: 0,
+                                                separator: ',',
+                                                delimiter: '.',
+                                                unit: 'ARS $',
+                                                suffixUnit: ''
+                                            }}
+                                            style={{...styles.inputContainer, marginRight: 42}}
+                                            value={this.state.goal}
                                             autoCapitalize='none'
                                             clearButtonMode='while-editing'
                                             underlineColorAndroid={"#ccc"}
-                                            placeholder={"(ARS) $7000"}
+                                            placeholder={"ARS $0"}
                                             placeholderTextColor={"#E3E3E3"}
                                             autoFocus={true}
-                                            onChangeText={(goal) => this.setState({goal})}
-                                            inputStyle={{
-                                                ...styles.inputContainer,
-                                                width: misc.window_width - 150,
-                                                right: 26
+                                            includeRawValueInChangeText={true}
+                                            onChangeText={(maskedText, rawText) => {
+                                                this.setState({
+                                                    goal: maskedText,
+                                                    goalRaw: rawText
+                                                })
                                             }}
-                                            keyboardType={'numeric'}
-                                            value={this.state.goal}/>
+                                        />
                                         <View
                                             style={{
                                                 flexDirection: 'row',
@@ -468,10 +566,10 @@ class MatchCreator extends React.Component {
                                                 value={this.state.desc}/>
                                             <Feather
                                                 name={'arrow-right-circle'}
-                                                disabled={this.state.goal === ''}
-                                                color={this.state.goal === '' ? '#E3E3E3' : '#20b382'}
+                                                disabled={this.state.goalRaw === 0}
+                                                color={this.state.goalRaw === 0 ? '#E3E3E3' : '#20b382'}
                                                 size={42}
-                                                onPress={() => this.onSubmit(4)}
+                                                onPress={() => this.onSubmit(3)}
                                             />
                                         </View>
                                     </View>
@@ -481,11 +579,11 @@ class MatchCreator extends React.Component {
                     }
 
                     {
-                        this.state.currentPosition === 4 &&
+                        this.state.currentPosition === 3 &&
                         <View style={styles.container}>
                             <View style={styles.row}>
                                 <FormLabel labelStyle={styles.formLabel}
-                                           containerStyle={styles.formLabelContainer}>{"¿En que momento te gustaría lograrlo?"}</FormLabel>
+                                           containerStyle={styles.formLabelContainer}>{""}</FormLabel>
                                 <View
                                     style={{
                                         flexDirection: 'row',
@@ -493,38 +591,77 @@ class MatchCreator extends React.Component {
                                         justifyContent: 'center',
                                         marginTop: 15
                                     }}>
-                                    <DatePicker
-                                        style={{
-                                            width: misc.window_width * 0.5,
+                                    {this.state.preferSay &&
+                                    <View>
+                                        <View style={{
+                                            flexDirection: 'row',
                                             alignItems: 'center',
                                             justifyContent: 'center',
-                                            left: '25%',
-                                            marginRight: 20,
-                                        }}
-                                        date={this.state.datetime}
-                                        mode="date"
-                                        format="YYYY-MM-DD"
-                                        placeholder="Selecciona fecha"
-                                        confirmBtnText="Confirmar"
-                                        cancelBtnText="Cancelar"
-                                        showIcon={true}
-                                        onDateChange={(datetime) => {
-                                            this.setState({datetime: datetime});
-                                        }}
-                                    />
-                                    <Feather
-                                        name={'arrow-right-circle'}
-                                        disabled={this.state.datetime === undefined}
-                                        color={this.state.datetime === undefined ? '#E3E3E3' : '#20b382'}
-                                        size={42}
-                                        onPress={() => this.onSubmit(5)}
-                                    />
+                                            marginTop: 15
+                                        }}>
+                                            <FormLabel labelStyle={{...styles.formLabel, fontSize: 18}}
+                                                       containerStyle={styles.formLabelContainer}>{`Encontramos un plan de ${this.state.suggestedDays} días`}</FormLabel>
+                                            <Feather
+                                                name={'arrow-right-circle'}
+                                                disabled={this.state.suggestedDays === undefined}
+                                                color={this.state.suggestedDays === undefined ? '#E3E3E3' : '#20b382'}
+                                                size={42}
+                                                onPress={() => this.onSubmit(4)}
+                                            />
+                                        </View>
+                                        <View style={{marginTop: 45}}>
+                                            <Badge containerStyle={styles.badgePreferNot}
+                                                   onPress={() => this.setState({preferSay: false})}
+                                                   value="Prefiero elegir periodo"/>
+                                        </View>
+                                    </View>
+                                    }
+
+                                    {!this.state.preferSay &&
+                                    <View style={{...styles.container, marginBottom: 50}}>
+                                        <FormLabel labelStyle={{...styles.formLabel, fontSize: 18}}
+                                                   containerStyle={styles.formLabelContainer}>{`Elije el periodo e intentaremos cumplir tus expectativas`}</FormLabel>
+                                        <MonthSelectorCalendar
+                                            selectedDate={this.state.month}
+                                            onMonthTapped={(date) => this.setState({month: date})}
+                                            maxDate={moment().add(10, 'years')}
+                                            minDate={moment().add(1, 'month')}
+                                            selectedBackgroundColor={'#20b382'}
+                                            nextIcon={<MaterialIcons
+                                                name={'keyboard-arrow-right'}
+                                                color={'gray'}
+                                                // style={{justifyContent: 'center', alignItems: 'center', marginTop: 10}}
+                                                size={40}
+                                            />}
+                                            prevIcon={<MaterialIcons
+                                                name={'keyboard-arrow-left'}
+                                                color={'gray'}
+                                                // style={{justifyContent: 'center', alignItems: 'center', marginTop: 10}}
+                                                size={40}
+                                            />}
+                                        />
+                                        <View style={{
+                                            flexDirection: 'row',
+                                            justifyContent: 'flex-end',
+                                            marginTop: 15,
+                                            marginRight: 15,
+                                        }}>
+                                            <Feather
+                                                name={'arrow-right-circle'}
+                                                disabled={this.state.month === undefined}
+                                                color={this.state.month === undefined ? '#E3E3E3' : '#20b382'}
+                                                size={42}
+                                                onPress={() => this.onSubmit(4)}
+                                            />
+                                        </View>
+                                    </View>
+                                    }
                                 </View>
                             </View>
                         </View>
                     }
                     {
-                        this.state.currentPosition === 5 &&
+                        this.state.currentPosition === 4 &&
                         <View>
                             <LottieView
                                 source={congrats}
@@ -620,6 +757,7 @@ const styles = StyleSheet.create({
         width: misc.window_width - 130,
         fontSize: 32,
         padding: 10,
+        color: '#848C91',
     },
     badgePreferNot: {
         width: "50%",
