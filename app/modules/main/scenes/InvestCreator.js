@@ -140,24 +140,25 @@ class MatchCreator extends React.Component {
             nextLabel="Siguiente"
             skipLabel="Saltar"
             onSkip={() => this.setOnboardingVisible(false)}
+            showDone
             pages={[
                 {
-                    backgroundColor: '#20b382',
-                    image: <Image source={require('./assets/HomeScreen.png')}/>,
+                    backgroundColor: '#fff',
+                    image: <Image source={require('./assets/onb1.png')}/>,
                     title: 'Crea tu perfil',
                     subtitle: 'Buscaremos la forma mas rapida para que cumplas tu objetivo de ahorro, solo necesitamos ingreses los datos y te aconsejaremos.',
                 },
                 {
-                    backgroundColor: '#fe6e58',
-                    image: <Image source={require('./assets/HomeScreen.png')}/>,
+                    backgroundColor: '#fff',
+                    image: <Image source={require('./assets/onb2.png')}/>,
                     title: 'Mix',
                     subtitle: 'Elegi el mix que se adapte a tus necesidades.',
                 },
                 {
-                    backgroundColor: '#999',
-                    image: <Image source={require('./assets/HomeScreen.png')}/>,
+                    backgroundColor: '#fff',
+                    image: <Image source={require('./assets/onb3.png')}/>,
                     title: '¡Listo!',
-                    subtitle: 'A partir de este momento podes darle seguimiento para lograr tu objetivo',
+                    subtitle: 'A partir de este momento podes darle seguimiento al plan que seleccionaste',
                 }
             ]}
         />)
@@ -250,12 +251,17 @@ class MatchCreator extends React.Component {
                 // this.animation && this.animation.play();
 
                 if (step === 4) {
-                    const {profitSaveRaw, entry, cost, risk, goalRaw, month, desc} = this.state;
+                    const {profitSaveRaw, entry, cost, risk, goalRaw, month, desc, suggestedDays, preferSay} = this.state;
                     const initialDate = new Date();
-                    const goalDate = new Date(month.format('MM-DD-YYYY'));
-
                     const savings = profitSaveRaw || Math.abs(entry - cost);
-                    const period = this.dateDiffInDays(initialDate, goalDate);
+                    let period = suggestedDays;
+                    const initGoalDate = new Date();
+                    let goalDate = new Date(initGoalDate.setDate(initGoalDate.getDate() + period));
+
+                    if (!preferSay) {
+                        goalDate = new Date(month.format('MM-DD-YYYY'));
+                        period = this.dateDiffInDays(initialDate, goalDate);
+                    }
 
                     this.setState({spinner: true}, () => this.props.getPlan({
                         savings,
@@ -325,6 +331,7 @@ class MatchCreator extends React.Component {
         }
 
         if (this.state.showOnboarding) return this.renderOnboarding();
+        // return this.renderOnboarding();
 
         return (
             <AppFontLoader>
