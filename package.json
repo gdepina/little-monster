@@ -20,7 +20,7 @@
     "preset": "jest-expo"
   },
   "dependencies": {
-    "axios": "^0.17.1",
+    "axios": "^0.21.1",
     "expo": "^35.0.0",
     "expo-font": "^7.0.0",
     "firebase": "^4.6.2",
